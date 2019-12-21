@@ -1,0 +1,22 @@
+#-------------------------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See https://go.microsoft.com/fwlink/?linkid=2090316 for license information.
+#-------------------------------------------------------------------------------------------------------------
+
+version: '3'
+services:
+  vscode:
+    build:
+      context: .
+      dockerfile: vscode.Dockerfile
+
+    volumes:
+      - ..:/workspace:cached
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ~/.terraform.d:/root/.terraform.d
+
+    environment:
+      TF_CLI_CONFIG_FILE: /root/.terraform.d/.terraformrc
+      PACKET_AUTH_TOKEN:
+
+    command: sleep infinity
