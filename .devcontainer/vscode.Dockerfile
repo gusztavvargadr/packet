@@ -36,9 +36,12 @@ RUN apt-get update \
 ENV DEBIAN_FRONTEND=dialog
 
 RUN curl -sSL https://releases.hashicorp.com/terraform/0.12.18/terraform_0.12.18_linux_amd64.zip -o /tmp/terraform.zip \
-  && unzip -qq /tmp/terraform.zip -d /usr/local/bin \
+  && unzip -qq /tmp/terraform.zip -d /usr/local/bin/ \
   && rm /tmp/terraform.zip
 
+ADD ./vscode.terraform.hcl $HOME/.terraform.d/.terraformrc
+ENV TF_CLI_CONFIG_FILE=$HOME/.terraform.d/.terraformrc
+
 RUN curl -sSL https://github.com/terraform-linters/tflint/releases/download/v0.13.2/tflint_linux_amd64.zip -o /tmp/tflint.zip \
-  && unzip -qq /tmp/tflint.zip -d /usr/local/bin \
+  && unzip -qq /tmp/tflint.zip -d /usr/local/bin/ \
   && rm /tmp/tflint.zip

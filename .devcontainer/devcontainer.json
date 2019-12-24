@@ -2,7 +2,7 @@
 	"name": "Docker Compose VSCode",
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "vscode",
-	"workspaceFolder": "/workspace",
+	"workspaceFolder": "/workspace/",
 	"settings": {
 		"terminal.integrated.shell.linux": "/bin/bash"
 	},

@@ -1,13 +1,8 @@
 terraform {
   required_version = ">= 0.12.18"
 
-  backend "remote" {
-    hostname     = "app.terraform.io"
-    organization = "gusztavvargadr"
-
-    workspaces {
-      prefix = "packet-samples-device-windows-"
-    }
+  backend "consul" {
+    path = "gusztavvargadr/packet/samples/device-windows/.terraform/terraform.tfstate"
   }
 }
 
