@@ -20,7 +20,7 @@ stages:
               docker volume ls
 
               docker-compose version
-              docker-compose ps -a
+              docker-compose ps
             displayName: Init
 
           - script: |
