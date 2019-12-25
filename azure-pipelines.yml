@@ -24,11 +24,15 @@ stages:
 
           - script: |
               docker-compose build sample-device-linux
+
               docker-compose build sample-device-windows
             displayName: Build
 
           - script: |
+              docker-compose run sample-device-linux init -backend=false
               docker-compose run sample-device-linux validate
+
+              docker-compose run sample-device-windows init -backend=false
               docker-compose run sample-device-windows validate
             displayName: Test
 
@@ -55,18 +59,20 @@ stages:
 
           - script: |
               docker pull library/consul:1.5.3
-              docker pull hashicorp/terraform:0.12.18
-
               docker-compose up -d build-consul
+
+              docker pull hashicorp/terraform:0.12.18
             displayName: Restore
 
           - script: |
               docker-compose build sample-device-linux
+
               docker-compose build sample-device-windows
             displayName: Build
 
           - script: |
               docker-compose run sample-device-linux init
+
               docker-compose run sample-device-windows init
             displayName: Test
 
