@@ -13,18 +13,13 @@ stages:
 
         steps:
           - script: |
+              dotnet --info
               docker version
-              docker image ls -a
-              docker container ls -a
-              docker network ls
-              docker volume ls
-
               docker-compose version
-              docker-compose ps
             displayName: Init
 
           - script: |
-              docker pull libary/consul:1.5.3
+              docker pull library/consul:1.5.3
               docker pull hashicorp/terraform:0.12.18
 
               docker-compose up -d build-consul
