@@ -1,0 +1,39 @@
+pr: none
+
+stages:
+  - stage: commit
+    displayName: Commit
+
+    jobs:
+      - job: build
+        displayName: Build
+
+        pool:
+          vmImage: ubuntu-16.04
+
+        steps:
+          - script: |
+              docker version
+              docker image ls -a
+              docker container ls -a
+              docker network ls
+              docker volume ls
+
+              docker-compose version
+              docker-compose ps -a
+            displayName: Init
+
+          - script: |
+              docker pull libary/consul:1.5.3
+              docker pull hashicorp/terraform:0.12.18
+
+              docker-compose up -d build-consul
+            displayName: Restore
+
+          - script: |
+              docker-compose build
+            displayName: Build
+
+          - script: |
+              docker-compose down --rmi local
+            displayName: Cleanup

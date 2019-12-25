@@ -8,7 +8,7 @@ services:
   vscode:
     build:
       context: ./
-      dockerfile: vscode.Dockerfile
+      dockerfile: ./vscode.Dockerfile
 
     volumes:
       - ../:/workspace/:cached
