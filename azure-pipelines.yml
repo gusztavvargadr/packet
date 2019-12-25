@@ -19,6 +19,41 @@ stages:
             displayName: Init
 
           - script: |
+              docker pull hashicorp/terraform:0.12.18
+            displayName: Restore
+
+          - script: |
+              docker-compose build sample-device-linux
+              docker-compose build sample-device-windows
+            displayName: Build
+
+          - script: |
+              docker-compose run sample-device-linux validate
+              docker-compose run sample-device-windows validate
+            displayName: Test
+
+          - script: |
+              docker-compose down --rmi local
+            displayName: Cleanup
+
+  - stage: acceptance
+    displayName: Acceptance
+
+    jobs:
+      - job: init
+        displayName: Init
+
+        pool:
+          vmImage: ubuntu-16.04
+
+        steps:
+          - script: |
+              dotnet --info
+              docker version
+              docker-compose version
+            displayName: Init
+
+          - script: |
               docker pull library/consul:1.5.3
               docker pull hashicorp/terraform:0.12.18
 
@@ -26,8 +61,14 @@ stages:
             displayName: Restore
 
           - script: |
-              docker-compose build
+              docker-compose build sample-device-linux
+              docker-compose build sample-device-windows
             displayName: Build
+
+          - script: |
+              docker-compose run sample-device-linux init
+              docker-compose run sample-device-windows init
+            displayName: Test
 
           - script: |
               docker-compose down --rmi local
