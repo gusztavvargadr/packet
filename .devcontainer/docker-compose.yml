@@ -15,7 +15,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 
     environment:
-      CONSUL_HTTP_ADDR:
       PACKET_AUTH_TOKEN:
+      CONSUL_HTTP_ADDR:
 
     command: sleep infinity

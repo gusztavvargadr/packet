@@ -14,31 +14,27 @@ stages:
         steps:
           - script: |
               dotnet --info
-              docker version
-              docker-compose version
+              dotnet tool list --global
+
+              dotnet cake build.cake --target=Init --exclusive
             displayName: Init
 
           - script: |
-              docker pull hashicorp/terraform:0.12.18
+              dotnet cake build.cake --target=Restore --exclusive
             displayName: Restore
 
           - script: |
-              docker-compose build sample-device-linux
-
-              docker-compose build sample-device-windows
+              dotnet cake build.cake --target=Build --exclusive
             displayName: Build
 
           - script: |
-              docker-compose run sample-device-linux init -backend=false
-              docker-compose run sample-device-linux validate
-
-              docker-compose run sample-device-windows init -backend=false
-              docker-compose run sample-device-windows validate
+              dotnet cake build.cake --target=Test --exclusive
             displayName: Test
 
           - script: |
-              docker-compose down --rmi local
-            displayName: Cleanup
+              dotnet cake build.cake --target=Clean --exclusive
+            displayName: Clean
+            condition: always()
 
   - stage: acceptance
     displayName: Acceptance
@@ -58,10 +54,10 @@ stages:
             displayName: Init
 
           - script: |
+              docker pull hashicorp/terraform:0.12.18
+
               docker pull library/consul:1.5.3
               docker-compose up -d build-consul
-
-              docker pull hashicorp/terraform:0.12.18
             displayName: Restore
 
           - script: |
