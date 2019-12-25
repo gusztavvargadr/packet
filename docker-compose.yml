@@ -23,7 +23,7 @@ services:
       - ./samples/device-linux/.terraform/:/opt/gusztavvargadr/packet/samples/device-linux/.terraform/
 
     environment:
-      PACKET_AUTH_TOKEN:
+      PACKET_AUTH_TOKEN: '${PACKET_AUTH_TOKEN:-packet-auth-token}'
       CONSUL_HTTP_ADDR: '${CONSUL_HTTP_ADDR:-build-consul:8500}'
 
   sample-device-windows:
@@ -37,5 +37,5 @@ services:
       - ./samples/device-windows/.terraform/:/opt/gusztavvargadr/packet/samples/device-windows/.terraform/
 
     environment:
-      PACKET_AUTH_TOKEN:
+      PACKET_AUTH_TOKEN: '${PACKET_AUTH_TOKEN:-packet-auth-token}'
       CONSUL_HTTP_ADDR: '${CONSUL_HTTP_ADDR:-build-consul:8500}'
