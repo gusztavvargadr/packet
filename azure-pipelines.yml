@@ -19,7 +19,7 @@ stages:
               dotnet tool install Cake.Tool --global --version 0.33.0
             displayName: Init - AZP
 
-            - script: |
+          - script: |
               dotnet cake build.cake --target=Init --exclusive
             displayName: Init - Cake
 
