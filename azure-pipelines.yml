@@ -17,6 +17,8 @@ stages:
               dotnet tool list --global
 
               dotnet tool install Cake.Tool --global --version 0.33.0
+
+              echo "##vso[task.setvariable variable=PATH;]$PATH:~/.dotnet/tools"
             displayName: Init - AZP
 
           - script: |
