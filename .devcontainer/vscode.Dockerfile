@@ -4,7 +4,8 @@
 # Licensed under the MIT License. See https://go.microsoft.com/fwlink/?linkid=2090316 for license information.
 #-------------------------------------------------------------------------------------------------------------
 
-FROM library/ubuntu:16.04
+# FROM library/ubuntu:16.04
+FROM mcr.microsoft.com/dotnet/core/sdk:2.1
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -45,3 +46,7 @@ ENV TF_CLI_CONFIG_FILE=$HOME/.terraform.d/.terraformrc
 RUN curl -sSL https://github.com/terraform-linters/tflint/releases/download/v0.13.2/tflint_linux_amd64.zip -o /tmp/tflint.zip \
   && unzip -qq /tmp/tflint.zip -d /usr/local/bin/ \
   && rm /tmp/tflint.zip
+
+ENV PATH="$PATH:/root/.dotnet/tools"
+RUN dotnet tool install Cake.Tool --global --version 0.33.0
+RUN dotnet tool install GitVersion.Tool --global --version 4.0.1-beta1-65

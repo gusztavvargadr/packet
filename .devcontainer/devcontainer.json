@@ -8,9 +8,9 @@
 	},
 	"extensions": [
 		"ms-azuretools.vscode-docker",
-		"ms-azure-devops.azure-pipelines",
 		"ms-vscode.csharp",
 		"cake-build.cake-vscode",
+		"ms-azure-devops.azure-pipelines",
 		"mauve.terraform"
 	]
 }

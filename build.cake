@@ -1,10 +1,11 @@
 #addin nuget:?package=Cake.Docker&version=0.11.0
 
 var target = Argument("target", "Test");
-var configuration = Argument("configuration", "device-linux");
+var configuration = Argument("configuration", "sample-device-linux");
 
-var defaultDockerRegistry = "localhost:5000/gusztavvargadr/packet/";
-var dockerRegistry = Argument("docker-registry", EnvironmentVariable("DOCKER_REGISTRY") ?? defaultDockerRegistry);
+var dockerRegistry = Argument("docker-registry", EnvironmentVariable("DOCKER_REGISTRY"));
+
+var terraformImageReference = "hashicorp/terraform:0.12.18";
 
 Task("Init")
   .Does(() => {
@@ -15,14 +16,11 @@ Task("Init")
 Task("Restore")
   .IsDependentOn("Init")
   .Does(() => {
-    if (dockerRegistry == defaultDockerRegistry) {
-      var settings = new DockerComposeUpSettings {
-        DetachedMode = true
-      };
-      var services = new [] { "build-registry" };
+    var settings = new DockerImagePullSettings {
+    };
+    var imageReference = terraformImageReference;
 
-      DockerComposeUp(settings, services);
-    }
+    DockerPull(settings, imageReference);
   });
 
 Task("Build")
@@ -30,7 +28,7 @@ Task("Build")
   .Does(() => {
     var settings = new DockerComposeBuildSettings {
     };
-    var services = new [] { $"sample-{configuration}" };
+    var services = new [] { configuration };
 
     DockerComposeBuild(settings, services);
   });
@@ -40,7 +38,7 @@ Task("Test")
   .Does(() => {
     var settings = new DockerComposeRunSettings {
     };
-    var service = $"sample-{configuration}";
+    var service = configuration;
 
     var initCommand = "init";
     var initArgs = new [] { "-backend=false" };

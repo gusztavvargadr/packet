@@ -1,25 +1,6 @@
 version: '3'
 
 services:
-  build-registry:
-    build:
-      context: ./
-      dockerfile: ./build/docker/registry.Dockerfile
-
-    ports:
-      - "5000:5000"
-
-  build-consul:
-    build:
-      context: ./
-      dockerfile: ./build/docker/consul.Dockerfile
-
-    volumes:
-      - ./.consul/data/:/consul/data/
-
-    ports:
-      - "8500:8500"
-
   sample-device-linux:
     image: ${DOCKER_REGISTRY}sample-device-linux:latest
     build:
@@ -32,8 +13,8 @@ services:
       - ./samples/device-linux/.terraform/:/opt/gusztavvargadr/packet/samples/device-linux/.terraform/
 
     environment:
-      PACKET_AUTH_TOKEN:
       CONSUL_HTTP_ADDR:
+      PACKET_AUTH_TOKEN:
 
   sample-device-windows:
     image: ${DOCKER_REGISTRY}sample-device-windows:latest
@@ -47,5 +28,5 @@ services:
       - ./samples/device-windows/.terraform/:/opt/gusztavvargadr/packet/samples/device-windows/.terraform/
 
     environment:
-      PACKET_AUTH_TOKEN:
       CONSUL_HTTP_ADDR:
+      PACKET_AUTH_TOKEN:

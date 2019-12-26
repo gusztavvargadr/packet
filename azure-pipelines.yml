@@ -14,16 +14,17 @@ stages:
         steps:
           - script: |
               dotnet --info
-              dotnet tool list --global
-
-              dotnet tool install Cake.Tool --global --version 0.33.0
 
               echo "##vso[task.setvariable variable=PATH;]$PATH:~/.dotnet/tools"
-            displayName: Init - AZP
+              dotnet tool install Cake.Tool --global --version 0.33.0
+              dotnet tool install GitVersion.Tool --global --version 4.0.1-beta1-65
+
+              dotnet tool list --global
+            displayName: Init - .NET
 
           - script: |
               dotnet cake build.cake --target=Init --exclusive
-            displayName: Init - Cake
+            displayName: Init
 
           - script: |
               dotnet cake build.cake --target=Restore --exclusive
@@ -55,8 +56,16 @@ stages:
         steps:
           - script: |
               dotnet --info
-              docker version
-              docker-compose version
+
+              echo "##vso[task.setvariable variable=PATH;]$PATH:~/.dotnet/tools"
+              dotnet tool install Cake.Tool --global --version 0.33.0
+              dotnet tool install GitVersion.Tool --global --version 4.0.1-beta1-65
+
+              dotnet tool list --global
+            displayName: Init - .NET
+
+          - script: |
+              dotnet cake build.cake --target=Init --exclusive
             displayName: Init
 
           - script: |
@@ -79,5 +88,6 @@ stages:
             displayName: Test
 
           - script: |
-              docker-compose down --rmi local
-            displayName: Cleanup
+              dotnet cake build.cake --target=Clean --exclusive
+            displayName: Clean
+            condition: always()
