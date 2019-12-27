@@ -1,0 +1,72 @@
+parameters:
+  options: []
+    # - sample: [ sample-name-part-1, sample-name-part-2, ... ]
+
+stages:
+  - stage: commit
+    displayName: Commit
+
+    jobs:
+      - ${{ each option in parameters.options }}:
+        - job: build_${{ join('_', option.sample) }}
+          displayName: Build ${{ join('-', option.sample) }}
+
+          pool:
+            vmImage: ubuntu-16.04
+
+          steps:
+            - script: |
+                dotnet --info
+
+                echo "##vso[task.setvariable variable=PATH;]$PATH:~/.dotnet/tools"
+                dotnet tool install Cake.Tool --global --version 0.33.0
+                dotnet tool install GitVersion.Tool --global --version 4.0.1-beta1-65
+
+                dotnet tool list --global
+              displayName: Init
+
+            - script: |
+                dotnet cake build.cake --target=publish --configuration=${{ join('-', option.sample) }}
+              displayName: Publish
+
+            - script: |
+                dotnet cake build.cake --target=clean --configuration=${{ join('-', option.sample) }}
+              displayName: Clean
+              condition: always()
+
+  - stage: acceptance
+    displayName: Acceptance
+
+    jobs:
+      - ${{ each option in parameters.options }}:
+        - job: test_${{ join('_', option.sample) }}
+          displayName: Test ${{ join('-', option.sample) }}
+
+          pool:
+            vmImage: ubuntu-16.04
+
+          steps:
+            - script: |
+                dotnet --info
+
+                echo "##vso[task.setvariable variable=PATH;]$PATH:~/.dotnet/tools"
+                dotnet tool install Cake.Tool --global --version 0.33.0
+                dotnet tool install GitVersion.Tool --global --version 4.0.1-beta1-65
+
+                dotnet tool list --global
+              displayName: Init
+
+            - script: |
+                dotnet cake build.cake --target=build --configuration=${{ join('-', option.sample) }}
+
+                export SAMPLE_NAME=${{ join('-', option.sample) }}
+                docker-compose run sample init
+                docker-compose run sample workspace list
+                docker-compose run sample workspace new test
+                docker-compose run sample workspace list
+              displayName: Test
+
+            - script: |
+                dotnet cake build.cake --target=clean --configuration=${{ join('-', option.sample) }}
+              displayName: Clean
+              condition: always()

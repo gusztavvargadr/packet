@@ -1,67 +1,8 @@
 pr: none
 
 stages:
-  - stage: commit
-    displayName: Commit
-
-    jobs:
-      - job: build
-        displayName: Build
-
-        pool:
-          vmImage: ubuntu-16.04
-
-        steps:
-          - script: |
-              dotnet --info
-
-              echo "##vso[task.setvariable variable=PATH;]$PATH:~/.dotnet/tools"
-              dotnet tool install Cake.Tool --global --version 0.33.0
-              dotnet tool install GitVersion.Tool --global --version 4.0.1-beta1-65
-
-              dotnet tool list --global
-            displayName: Init
-
-          - script: |
-              dotnet cake build.cake --target=publish
-            displayName: Publish
-
-          - script: |
-              dotnet cake build.cake --target=clean
-            displayName: Clean
-            condition: always()
-
-  - stage: acceptance
-    displayName: Acceptance
-
-    jobs:
-      - job: init
-        displayName: Init
-
-        pool:
-          vmImage: ubuntu-16.04
-
-        steps:
-          - script: |
-              dotnet --info
-
-              echo "##vso[task.setvariable variable=PATH;]$PATH:~/.dotnet/tools"
-              dotnet tool install Cake.Tool --global --version 0.33.0
-              dotnet tool install GitVersion.Tool --global --version 4.0.1-beta1-65
-
-              dotnet tool list --global
-            displayName: Init
-
-          - script: |
-              dotnet cake build.cake --target=build
-
-              docker-compose run sample-device-linux init
-              docker-compose run sample-device-linux workspace list
-              docker-compose run sample-device-linux workspace new test
-              docker-compose run sample-device-linux workspace list
-            displayName: Test
-
-          - script: |
-              dotnet cake build.cake --target=clean --exclusive
-            displayName: Clean
-            condition: always()
+  - template: ./build/azp/sample.azure-pipelines.yml
+    parameters:
+      options:
+        - sample: [ 'device', 'linux' ]
+        - sample: [ 'device', 'windows' ]
