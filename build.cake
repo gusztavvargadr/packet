@@ -40,6 +40,7 @@ Task("Restore")
 
     {
       var settings = new DockerComposePullSettings {
+        IgnorePullFailures = true
       };
 
       DockerComposePull(settings);
