@@ -9,8 +9,6 @@ var dockerRegistry = Argument("docker-registry", EnvironmentVariable("DOCKER_REG
 var defaultConsulHttpAddr = "consul:8500";
 var consulHttpAddr = Argument("consul-http-addr", EnvironmentVariable("CONSUL_HTTP_ADDR", defaultConsulHttpAddr));
 
-var terraformImageReference = "hashicorp/terraform:0.12.18";
-
 Task("Init")
   .Does(() => {
     StartProcess("docker", "version");
@@ -41,11 +39,10 @@ Task("Restore")
     }
 
     {
-      var settings = new DockerImagePullSettings {
+      var settings = new DockerComposePullSettings {
       };
-      var imageReference = terraformImageReference;
 
-      DockerPull(settings, imageReference);
+      DockerComposePull(settings);
     }
   });
 
