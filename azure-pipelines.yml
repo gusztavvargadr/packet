@@ -20,34 +20,14 @@ stages:
               dotnet tool install GitVersion.Tool --global --version 4.0.1-beta1-65
 
               dotnet tool list --global
-            displayName: Init - .NET
-
-          - script: |
-              dotnet cake build.cake --target=init --exclusive
             displayName: Init
 
           - script: |
-              dotnet cake build.cake --target=restore --exclusive
-            displayName: Restore
-
-          - script: |
-              dotnet cake build.cake --target=build --exclusive
-            displayName: Build
-
-          - script: |
-              dotnet cake build.cake --target=test --exclusive
-            displayName: Test
-
-          - script: |
-              dotnet cake build.cake --target=package --exclusive
-            displayName: Package
-
-          - script: |
-              dotnet cake build.cake --target=publish --exclusive
+              dotnet cake build.cake --target=publish
             displayName: Publish
 
           - script: |
-              dotnet cake build.cake --target=clean --exclusive
+              dotnet cake build.cake --target=clean
             displayName: Clean
             condition: always()
 
@@ -70,21 +50,11 @@ stages:
               dotnet tool install GitVersion.Tool --global --version 4.0.1-beta1-65
 
               dotnet tool list --global
-            displayName: Init - .NET
-
-          - script: |
-              dotnet cake build.cake --target=init --exclusive
             displayName: Init
 
           - script: |
-              dotnet cake build.cake --target=restore --exclusive
-            displayName: Restore
+              dotnet cake build.cake --target=build
 
-          - script: |
-              dotnet cake build.cake --target=build --exclusive
-            displayName: Build
-
-          - script: |
               docker-compose run sample-device-linux init
               docker-compose run sample-device-linux workspace list
               docker-compose run sample-device-linux workspace new test
