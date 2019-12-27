@@ -1,7 +1,7 @@
 #addin nuget:?package=Cake.Docker&version=0.11.0
 
 var target = Argument("target", "Publish");
-var configuration = Argument("configuration", "sample-device-linux");
+var configuration = Argument("configuration", "device-linux");
 
 var defaultDockerRegistry = "localhost:5000/gusztavvargadr/packet/";
 var dockerRegistry = Argument("docker-registry", EnvironmentVariable("DOCKER_REGISTRY", defaultDockerRegistry));
@@ -15,6 +15,8 @@ Task("Init")
   .Does(() => {
     StartProcess("docker", "version");
     StartProcess("docker-compose", "version");
+
+    Environment.SetEnvironmentVariable("SAMPLE_NAME", configuration);
   });
 
 Task("Restore")
@@ -52,7 +54,7 @@ Task("Build")
   .Does(() => {
     var settings = new DockerComposeBuildSettings {
     };
-    var services = new [] { configuration };
+    var services = new [] { "sample" };
 
     DockerComposeBuild(settings, services);
   });
@@ -62,7 +64,7 @@ Task("Test")
   .Does(() => {
     var settings = new DockerComposeRunSettings {
     };
-    var service = configuration;
+    var service = "sample";
 
     var initCommand = "init";
     var initArgs = new [] { "-backend=false" };
@@ -84,7 +86,7 @@ Task("Publish")
   .Does(() => {
     var settings = new DockerImagePushSettings {
     };
-    var imageReference = $"{dockerRegistry}{configuration}";
+    var imageReference = $"{dockerRegistry}sample-{configuration}:latest";
 
     DockerPush(settings, imageReference);
   });

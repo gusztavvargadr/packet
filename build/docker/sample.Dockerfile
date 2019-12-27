@@ -7,10 +7,10 @@ WORKDIR /opt/gusztavvargadr/packet/
 
 ADD ./src/ ./src/
 
-ARG name
-ADD ./samples/${name}/ ./samples/${name}/
+ARG SAMPLE_NAME
+ADD ./samples/${SAMPLE_NAME}/ ./samples/${SAMPLE_NAME}/
 
-WORKDIR /opt/gusztavvargadr/packet/samples/${name}/
+WORKDIR /opt/gusztavvargadr/packet/samples/${SAMPLE_NAME}/
 
 RUN terraform init -backend=false
 
