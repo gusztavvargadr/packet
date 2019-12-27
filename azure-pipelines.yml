@@ -39,6 +39,14 @@ stages:
             displayName: Test
 
           - script: |
+              dotnet cake build.cake --target=package --exclusive
+            displayName: Package
+
+          - script: |
+              dotnet cake build.cake --target=publish --exclusive
+            displayName: Publish
+
+          - script: |
               dotnet cake build.cake --target=clean --exclusive
             displayName: Clean
             condition: always()
@@ -69,19 +77,18 @@ stages:
             displayName: Init
 
           - script: |
-              docker pull hashicorp/terraform:0.12.18
+              dotnet cake build.cake --target=restore --exclusive
             displayName: Restore
 
           - script: |
-              docker-compose build sample-device-linux
-
-              docker-compose build sample-device-windows
+              dotnet cake build.cake --target=build --exclusive
             displayName: Build
 
           - script: |
               docker-compose run sample-device-linux init
-
-              docker-compose run sample-device-windows init
+              docker-compose run sample-device-linux workspace list
+              docker-compose run sample-device-linux workspace new test
+              docker-compose run sample-device-linux workspace list
             displayName: Test
 
           - script: |
