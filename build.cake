@@ -3,9 +3,8 @@
 var target = Argument("target", "Test");
 var configuration = Argument("configuration", "sample-device-linux");
 
-var dockerRegistry = Argument("docker-registry", EnvironmentVariable("DOCKER_REGISTRY"));
-
 var terraformImageReference = "hashicorp/terraform:0.12.18";
+var dockerRegistry = Argument("docker-registry", EnvironmentVariable("DOCKER_REGISTRY"));
 
 Task("Init")
   .Does(() => {
@@ -16,11 +15,22 @@ Task("Init")
 Task("Restore")
   .IsDependentOn("Init")
   .Does(() => {
-    var settings = new DockerImagePullSettings {
-    };
-    var imageReference = terraformImageReference;
+    // {
+    //   var settings = new DockerComposeUpSettings {
+    //     DetachedMode = true
+    //   };
+    //   var services = new [] { "registry", "consul" };
 
-    DockerPull(settings, imageReference);
+    //   DockerComposeUp(settings, services);
+    // }
+
+    {
+      var settings = new DockerImagePullSettings {
+      };
+      var imageReference = terraformImageReference;
+
+      DockerPull(settings, imageReference);
+    }
   });
 
 Task("Build")

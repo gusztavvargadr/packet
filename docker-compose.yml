@@ -1,8 +1,30 @@
 version: '3'
 
 services:
+  registry:
+    build:
+      context: ./build/docker/
+      dockerfile: ./registry.Dockerfile
+
+    volumes:
+      - ./.registry/data/:/var/lib/registry/
+
+    ports:
+      - 5000:5000
+
+  consul:
+    build:
+      context: ./build/docker/
+      dockerfile: ./consul.Dockerfile
+
+    volumes:
+      - ./.consul/data/:/consul/data/
+
+    ports:
+      - 8500:8500
+
   sample-device-linux:
-    image: ${DOCKER_REGISTRY}sample-device-linux:latest
+    image: ${DOCKER_REGISTRY:-}sample-device-linux:latest
     build:
       context: ./
       dockerfile: ./build/docker/sample.Dockerfile
@@ -17,7 +39,7 @@ services:
       PACKET_AUTH_TOKEN:
 
   sample-device-windows:
-    image: ${DOCKER_REGISTRY}sample-device-windows:latest
+    image: ${DOCKER_REGISTRY:-}sample-device-windows:latest
     build:
       context: ./
       dockerfile: ./build/docker/sample.Dockerfile

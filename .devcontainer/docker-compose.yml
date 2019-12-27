@@ -15,31 +15,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 
     environment:
-      COMPOSE_PROJECT_NAME: packet_devcontainer
-      DOCKER_REGISTRY: ${DOCKER_REGISTRY:-localhost:5000/gusztavvargadr/packet/}
-      CONSUL_HTTP_ADDR: ${CONSUL_HTTP_ADDR:-consul:8500}
-      PACKET_AUTH_TOKEN: ${PACKET_AUTH_TOKEN:-packet-auth-token}
+      DOCKER_REGISTRY:
+      CONSUL_HTTP_ADDR:
+      PACKET_AUTH_TOKEN:
 
     command: sleep infinity
-
-  registry:
-    build:
-      context: ./
-      dockerfile: ./registry.Dockerfile
-
-    volumes:
-      - ./.registry/data/:/var/lib/registry/
-
-    ports:
-      - "5000:5000"
-
-  consul:
-    build:
-      context: ./
-      dockerfile: ./consul.Dockerfile
-
-    volumes:
-      - ./.consul/data/:/consul/data/
-
-    ports:
-      - "8500:8500"

@@ -23,23 +23,23 @@ stages:
             displayName: Init - .NET
 
           - script: |
-              dotnet cake build.cake --target=Init --exclusive
+              dotnet cake build.cake --target=init --exclusive
             displayName: Init
 
           - script: |
-              dotnet cake build.cake --target=Restore --exclusive
+              dotnet cake build.cake --target=restore --exclusive
             displayName: Restore
 
           - script: |
-              dotnet cake build.cake --target=Build --exclusive
+              dotnet cake build.cake --target=build --exclusive
             displayName: Build
 
           - script: |
-              dotnet cake build.cake --target=Test --exclusive
+              dotnet cake build.cake --target=test --exclusive
             displayName: Test
 
           - script: |
-              dotnet cake build.cake --target=Clean --exclusive
+              dotnet cake build.cake --target=clean --exclusive
             displayName: Clean
             condition: always()
 
@@ -65,14 +65,11 @@ stages:
             displayName: Init - .NET
 
           - script: |
-              dotnet cake build.cake --target=Init --exclusive
+              dotnet cake build.cake --target=init --exclusive
             displayName: Init
 
           - script: |
               docker pull hashicorp/terraform:0.12.18
-
-              docker pull library/consul:1.5.3
-              docker-compose up -d build-consul
             displayName: Restore
 
           - script: |
@@ -88,6 +85,6 @@ stages:
             displayName: Test
 
           - script: |
-              dotnet cake build.cake --target=Clean --exclusive
+              dotnet cake build.cake --target=clean --exclusive
             displayName: Clean
             condition: always()

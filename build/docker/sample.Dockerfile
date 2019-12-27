@@ -1,7 +1,7 @@
 FROM hashicorp/terraform:0.12.18
 
-ADD ./build/docker/sample.terraform.hcl $HOME/.terraform.d/.terraformrc
-ENV TF_CLI_CONFIG_FILE=$HOME/.terraform.d/.terraformrc
+ADD ./build/docker/sample.terraform.hcl /root/.terraform.d/.terraformrc
+ENV TF_CLI_CONFIG_FILE /root/.terraform.d/.terraformrc
 
 WORKDIR /opt/gusztavvargadr/packet/
 
