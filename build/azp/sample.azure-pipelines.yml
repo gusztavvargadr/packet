@@ -20,7 +20,6 @@ stages:
 
                 echo "##vso[task.setvariable variable=PATH;]$PATH:~/.dotnet/tools"
                 dotnet tool install Cake.Tool --global --version 0.33.0
-                dotnet tool install GitVersion.Tool --global --version 4.0.1-beta1-65
 
                 dotnet tool list --global
               displayName: Init
@@ -51,7 +50,6 @@ stages:
 
                 echo "##vso[task.setvariable variable=PATH;]$PATH:~/.dotnet/tools"
                 dotnet tool install Cake.Tool --global --version 0.33.0
-                dotnet tool install GitVersion.Tool --global --version 4.0.1-beta1-65
 
                 dotnet tool list --global
               displayName: Init

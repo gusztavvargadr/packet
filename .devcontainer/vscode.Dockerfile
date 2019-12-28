@@ -49,4 +49,3 @@ RUN curl -sSL https://github.com/terraform-linters/tflint/releases/download/v0.1
 
 ENV PATH $PATH:/root/.dotnet/tools
 RUN dotnet tool install Cake.Tool --global --version 0.33.0
-RUN dotnet tool install GitVersion.Tool --global --version 4.0.1-beta1-65

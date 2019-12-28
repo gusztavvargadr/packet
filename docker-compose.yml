@@ -1,6 +1,14 @@
 version: '3'
 
 services:
+  gitversion:
+    build:
+      context: ./build/docker/
+      dockerfile: ./gitversion.Dockerfile
+
+    volumes:
+      - ./:/work/
+
   registry:
     build:
       context: ./build/docker/
@@ -24,7 +32,7 @@ services:
       - 8500:8500
 
   sample:
-    image: ${DOCKER_REGISTRY}gusztavvargadr/packet/sample-${SAMPLE_NAME}:latest
+    image: ${DOCKER_REGISTRY}gusztavvargadr/packet/sample-${SAMPLE_NAME}:${DOCKER_IMAGE_TAG}
     build:
       context: ./
       dockerfile: ./build/docker/sample.Dockerfile

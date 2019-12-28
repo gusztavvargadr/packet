@@ -6,6 +6,9 @@ var configuration = Argument("configuration", "device-linux");
 var defaultDockerRegistry = "localhost:5000/";
 var dockerRegistry = Argument("docker-registry", EnvironmentVariable("DOCKER_REGISTRY", defaultDockerRegistry));
 
+var defaultDockerImageTag = "latest";
+var dockerImageTag = Argument("docker-image-tag", EnvironmentVariable("DOCKER_IMAGE_TAG", defaultDockerImageTag));
+
 var defaultConsulHttpAddr = "consul:8500";
 var consulHttpAddr = Argument("consul-http-addr", EnvironmentVariable("CONSUL_HTTP_ADDR", defaultConsulHttpAddr));
 
@@ -35,8 +38,22 @@ Task("Init")
     Environment.SetEnvironmentVariable("SAMPLE_NAME", configuration);
   });
 
-Task("Restore")
+Task("Version")
   .IsDependentOn("Init")
+  .Does(() => {
+    var settings = new DockerComposeRunSettings {
+    };
+    var service = "gitversion";
+    var command = "/showVariable SemVer";
+
+    DockerComposeRun(settings, service, command);
+
+    dockerImageTag = "rc";
+    Environment.SetEnvironmentVariable("DOCKER_IMAGE_TAG", dockerImageTag);
+  });
+
+Task("Restore")
+  .IsDependentOn("Version")
   .Does(() => {
   });
 
@@ -77,13 +94,13 @@ Task("Publish")
   .Does(() => {
     var settings = new DockerImagePushSettings {
     };
-    var imageReference = $"{dockerRegistry}gusztavvargadr/packet/sample-{configuration}:latest";
+    var imageReference = $"{dockerRegistry}gusztavvargadr/packet/sample-{configuration}:{dockerImageTag}";
 
     DockerPush(settings, imageReference);
   });
 
 Task("Clean")
-  .IsDependentOn("Init")
+  .IsDependentOn("Version")
   .Does(() => {
     var settings = new DockerComposeDownSettings {
       Rmi = "all"

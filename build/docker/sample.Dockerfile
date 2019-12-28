@@ -14,4 +14,4 @@ WORKDIR /opt/gusztavvargadr/packet/samples/${SAMPLE_NAME}/
 
 RUN terraform init -backend=false
 
-CMD [ "version" ]
+CMD [ "-help" ]
