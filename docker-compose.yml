@@ -23,11 +23,8 @@ services:
     ports:
       - 8500:8500
 
-  terraform:
-    image: hashicorp/terraform:0.12.18
-
   sample:
-    image: ${DOCKER_REGISTRY}sample-${SAMPLE_NAME}:latest
+    image: ${DOCKER_REGISTRY}gusztavvargadr/packet/sample-${SAMPLE_NAME}:latest
     build:
       context: ./
       dockerfile: ./build/docker/sample.Dockerfile

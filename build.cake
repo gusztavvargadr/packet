@@ -3,7 +3,7 @@
 var target = Argument("target", "Publish");
 var configuration = Argument("configuration", "device-linux");
 
-var defaultDockerRegistry = "localhost:5000/gusztavvargadr/packet/";
+var defaultDockerRegistry = "localhost:5000/";
 var dockerRegistry = Argument("docker-registry", EnvironmentVariable("DOCKER_REGISTRY", defaultDockerRegistry));
 
 var defaultConsulHttpAddr = "consul:8500";
@@ -14,12 +14,6 @@ Task("Init")
     StartProcess("docker", "version");
     StartProcess("docker-compose", "version");
 
-    Environment.SetEnvironmentVariable("SAMPLE_NAME", configuration);
-  });
-
-Task("Restore")
-  .IsDependentOn("Init")
-  .Does(() => {
     if (dockerRegistry == defaultDockerRegistry) {
       var settings = new DockerComposeUpSettings {
         DetachedMode = true
@@ -38,13 +32,12 @@ Task("Restore")
       DockerComposeUp(settings, services);
     }
 
-    {
-      var settings = new DockerComposePullSettings {
-        IgnorePullFailures = true
-      };
+    Environment.SetEnvironmentVariable("SAMPLE_NAME", configuration);
+  });
 
-      DockerComposePull(settings);
-    }
+Task("Restore")
+  .IsDependentOn("Init")
+  .Does(() => {
   });
 
 Task("Build")
@@ -84,7 +77,7 @@ Task("Publish")
   .Does(() => {
     var settings = new DockerImagePushSettings {
     };
-    var imageReference = $"{dockerRegistry}sample-{configuration}:latest";
+    var imageReference = $"{dockerRegistry}gusztavvargadr/packet/sample-{configuration}:latest";
 
     DockerPush(settings, imageReference);
   });
