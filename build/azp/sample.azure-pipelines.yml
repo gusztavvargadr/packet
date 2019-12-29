@@ -51,7 +51,7 @@ stages:
 
           steps:
             - task: DownloadPipelineArtifact@2
-              input:
+              inputs:
                 artifact: build-${{ join('-', option.sample) }}-registry
                 path: $(Build.SourcesDirectory)/.registry/
               displayName: Artifacts Download Registry
