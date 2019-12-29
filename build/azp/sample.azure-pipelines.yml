@@ -22,6 +22,8 @@ stages:
                 dotnet tool install Cake.Tool --global --version 0.33.0
 
                 dotnet tool list --global
+
+                env
               displayName: .NET Tools Init
 
             - script: |
@@ -36,6 +38,11 @@ stages:
             - publish: $(Build.SourcesDirectory)/.registry/
               artifact: build-${{ join('-', option.sample) }}-registry
               displayName: Artifacts Publish Registry
+              condition: always()
+
+            - publish: $(Build.SourcesDirectory)/.consul/
+              artifact: build-${{ join('-', option.sample) }}-consul
+              displayName: Artifacts Publish Consul
               condition: always()
 
   - stage: acceptance
@@ -63,6 +70,8 @@ stages:
                 dotnet tool install Cake.Tool --global --version 0.33.0
 
                 dotnet tool list --global
+
+                env
               displayName: .NET Tools Init
 
             - script: |
