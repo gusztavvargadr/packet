@@ -33,14 +33,9 @@ stages:
               displayName: Build Clean
               condition: always()
 
-            - publish: ./.registry/
+            - publish: $(Build.SourcesDirectory)/.registry/
               artifact: build-${{ join('-', option.sample) }}-registry
               displayName: Artifacts Publish Registry
-              condition: always()
-
-            - publish: ./.consul/
-              artifact: build-${{ join('-', option.sample) }}-consul
-              displayName: Artifacts Publish Consul
               condition: always()
 
   - stage: acceptance
@@ -55,8 +50,11 @@ stages:
             vmImage: ubuntu-16.04
 
           steps:
-            - download: current
-              displayName: Artifacts Download
+            - task: DownloadPipelineArtifact@2
+              input:
+                artifact: build-${{ join('-', option.sample) }}-registry
+                path: $(Build.SourcesDirectory)/.registry/
+              displayName: Artifacts Download Registry
 
             - script: |
                 dotnet --info
