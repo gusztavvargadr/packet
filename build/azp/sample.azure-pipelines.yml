@@ -22,15 +22,25 @@ stages:
                 dotnet tool install Cake.Tool --global --version 0.33.0
 
                 dotnet tool list --global
-              displayName: Init
+              displayName: .NET Tools Init
 
             - script: |
                 dotnet cake build.cake --target=publish --configuration=${{ join('-', option.sample) }}
-              displayName: Publish
+              displayName: Build Publish
 
             - script: |
                 dotnet cake build.cake --target=clean --configuration=${{ join('-', option.sample) }}
-              displayName: Clean
+              displayName: Build Clean
+              condition: always()
+
+            - publish: ./.registry/
+              artifact: build-${{ join('-', option.sample) }}-registry
+              displayName: Artifacts Publish Registry
+              condition: always()
+
+            - publish: ./.consul/
+              artifact: build-${{ join('-', option.sample) }}-consul
+              displayName: Artifacts Publish Consul
               condition: always()
 
   - stage: acceptance
@@ -45,6 +55,9 @@ stages:
             vmImage: ubuntu-16.04
 
           steps:
+            - download: current
+              displayName: Artifacts Download
+
             - script: |
                 dotnet --info
 
@@ -52,19 +65,13 @@ stages:
                 dotnet tool install Cake.Tool --global --version 0.33.0
 
                 dotnet tool list --global
-              displayName: Init
+              displayName: .NET Tools Init
 
             - script: |
-                dotnet cake build.cake --target=build --configuration=${{ join('-', option.sample) }}
-
-                export SAMPLE_NAME=${{ join('-', option.sample) }}
-                docker-compose run sample init
-                docker-compose run sample workspace list
-                docker-compose run sample workspace new test
-                docker-compose run sample workspace list
-              displayName: Test
+                dotnet cake release.cake --target=test --configuration=${{ join('-', option.sample) }}
+              displayName: Build Test
 
             - script: |
-                dotnet cake build.cake --target=clean --configuration=${{ join('-', option.sample) }}
-              displayName: Clean
+                dotnet cake release.cake --target=clean --configuration=${{ join('-', option.sample) }}
+              displayName: Build Clean
               condition: always()
