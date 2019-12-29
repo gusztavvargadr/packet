@@ -32,7 +32,7 @@ services:
       - 8500:8500
 
   sample:
-    image: ${DOCKER_REGISTRY}gusztavvargadr/packet/sample-${SAMPLE_NAME}:${DOCKER_IMAGE_TAG}
+    image: ${DOCKER_REGISTRY}gusztavvargadr/packet/samples/${SAMPLE_NAME}:${DOCKER_IMAGE_TAG}
     build:
       context: ./
       dockerfile: ./build/docker/sample.Dockerfile

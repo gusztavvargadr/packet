@@ -40,15 +40,36 @@ Task("Init")
 
 Task("Version")
   .IsDependentOn("Init")
-  .Does(() => {
-    var settings = new DockerComposeRunSettings {
+  .Does((context) => {
+    var buildSettings = new DockerComposeBuildSettings {
     };
-    var service = "gitversion";
-    var command = "/showVariable SemVer";
+    var buildServices = new [] { "gitversion" };
 
-    DockerComposeRun(settings, service, command);
+    DockerComposeBuild(buildSettings, buildServices);
 
-    dockerImageTag = "rc";
+    var runSettings = new DockerComposeRunSettings {
+    };
+    var runService = "gitversion";
+    var runCommand = "/output json";
+
+    DockerComposeRun(runSettings, runService, runCommand);
+
+    runCommand = "/showvariable SemVer";
+
+    var runner = new GenericDockerComposeRunner<DockerComposeRunSettings>(
+      context.FileSystem,
+      context.Environment,
+      context.ProcessRunner,
+      context.Tools
+    );
+    var result = string.Join(
+      Environment.NewLine,
+      runner.RunWithResult("run", runSettings, (items) => items.ToArray(), runService, runCommand)
+    );
+
+    dockerImageTag = result.Substring(7);
+    Information(dockerImageTag);
+
     Environment.SetEnvironmentVariable("DOCKER_IMAGE_TAG", dockerImageTag);
   });
 
@@ -94,7 +115,8 @@ Task("Publish")
   .Does(() => {
     var settings = new DockerImagePushSettings {
     };
-    var imageReference = $"{dockerRegistry}gusztavvargadr/packet/sample-{configuration}:{dockerImageTag}";
+    var imageReference = $"{dockerRegistry}gusztavvargadr/packet/samples/{configuration}:{dockerImageTag}";
+    Information($"{imageReference}.");
 
     DockerPush(settings, imageReference);
   });

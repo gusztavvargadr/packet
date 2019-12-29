@@ -1,5 +1,5 @@
 locals {
-  configuration_name = "packet-samples-device-linux"
+  configuration_name = "gusztavvargadr-packet-samples-device-linux"
   deployment_name    = "${local.configuration_name}-${terraform.workspace}"
 
   project_name = "core"
