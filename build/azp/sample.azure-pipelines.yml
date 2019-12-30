@@ -22,8 +22,6 @@ stages:
                 dotnet tool install Cake.Tool --global --version 0.33.0
 
                 dotnet tool list --global
-
-                env
               displayName: .NET Tools Init
 
             - script: |
@@ -70,12 +68,10 @@ stages:
                 dotnet tool install Cake.Tool --global --version 0.33.0
 
                 dotnet tool list --global
-
-                env
               displayName: .NET Tools Init
 
             - script: |
-                dotnet cake release.cake --target=test --configuration=${{ join('-', option.sample) }}
+                dotnet cake release.cake --target=build --configuration=${{ join('-', option.sample) }}
               displayName: Build Test
 
             - script: |
