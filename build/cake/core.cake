@@ -41,28 +41,28 @@ Task("Init")
 Task("Version")
   .IsDependentOn("Init")
   .Does((context) => {
-    var buildSettings = new DockerComposeBuildSettings {
+    var upSettings = new DockerComposeUpSettings {
     };
-    var buildServices = new [] { "gitversion" };
+    var upServices = new [] { "gitversion" };
 
-    DockerComposeBuild(buildSettings, buildServices);
+    DockerComposeUp(upSettings, upServices);
 
-    var runner = new GenericDockerComposeRunner<DockerComposeRunSettings>(
+    var runner = new GenericDockerComposeRunner<DockerComposeLogsSettings>(
       context.FileSystem,
       context.Environment,
       context.ProcessRunner,
       context.Tools
     );
 
-    var runSettings = new DockerComposeRunSettings {
+    var logsSettings = new DockerComposeLogsSettings {
+      NoColor = true
     };
-    var runService = "gitversion";
-    var runCommand = "/showvariable SemVer";
+    var logsService = "gitversion";
 
     dockerImageTag = string.Join(
       Environment.NewLine,
-      runner.RunWithResult("run", runSettings, (items) => items.ToArray(), runService, runCommand)
-    );
+      runner.RunWithResult("logs", logsSettings, (items) => items.ToArray(), logsService)
+    ).Split('|')[1].Trim();
     Information(dockerImageTag);
 
     Environment.SetEnvironmentVariable("DOCKER_IMAGE_TAG", dockerImageTag);
