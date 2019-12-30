@@ -40,10 +40,10 @@ stages:
               displayName: Artifacts Publish Registry
               condition: always()
 
-            - publish: $(Build.SourcesDirectory)/.consul/
-              artifact: build-${{ join('-', option.sample) }}-consul
-              displayName: Artifacts Publish Consul
-              condition: always()
+            # - publish: $(Build.SourcesDirectory)/.consul/
+            #   artifact: build-${{ join('-', option.sample) }}-consul
+            #   displayName: Artifacts Publish Consul
+            #   condition: always()
 
   - stage: acceptance
     displayName: Acceptance

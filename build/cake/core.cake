@@ -59,7 +59,7 @@ Task("Version")
     var runService = "gitversion";
     var runCommand = "/showvariable SemVer";
 
-    var dockerImageTag = string.Join(
+    dockerImageTag = string.Join(
       Environment.NewLine,
       runner.RunWithResult("run", runSettings, (items) => items.ToArray(), runService, runCommand)
     );
