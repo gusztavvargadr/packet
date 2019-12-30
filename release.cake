@@ -3,11 +3,12 @@
 Task("Restore")
   .IsDependentOn("Version")
   .Does(() => {
-    var settings = new DockerImagePullSettings {
+    var settings = new DockerComposeRunSettings {
     };
-    var imageReference = $"{dockerRegistry}gusztavvargadr/packet/samples/{configuration}:{dockerImageTag}";
+    var service = "sample";
+    var command = "init";
 
-    DockerPull(settings, imageReference);
+    DockerComposeRun(settings, service, command);
   });
 
 Task("Build")
@@ -16,7 +17,7 @@ Task("Build")
     var settings = new DockerComposeRunSettings {
     };
     var service = "sample";
-    var command = "init";
+    var command = "plan";
 
     DockerComposeRun(settings, service, command);
   });
@@ -27,7 +28,7 @@ Task("Test")
     var settings = new DockerComposeRunSettings {
     };
     var service = "sample";
-    var command = "plan";
+    var command = "apply";
 
     DockerComposeRun(settings, service, command);
   });

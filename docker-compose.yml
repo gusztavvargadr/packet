@@ -45,3 +45,12 @@ services:
     environment:
       CONSUL_HTTP_ADDR:
       PACKET_AUTH_TOKEN:
+      TF_VAR_configuration_name:
+      TF_VAR_project_name:
+      TF_VAR_device_facility:
+      TF_VAR_device_plan:
+      TF_VAR_device_os_name:
+      TF_VAR_device_user_data_file_path:
+      TF_CLI_ARGS_init:
+      TF_CLI_ARGS_plan:
+      TF_CLI_ARGS_apply:

@@ -38,11 +38,6 @@ stages:
               displayName: Artifacts Publish Registry
               condition: always()
 
-            # - publish: $(Build.SourcesDirectory)/.consul/
-            #   artifact: build-${{ join('-', option.sample) }}-consul
-            #   displayName: Artifacts Publish Consul
-            #   condition: always()
-
   - stage: acceptance
     displayName: Acceptance
 
@@ -77,4 +72,9 @@ stages:
             - script: |
                 dotnet cake release.cake --target=clean --configuration=${{ join('-', option.sample) }}
               displayName: Build Clean
+              condition: always()
+
+            - publish: $(Build.SourcesDirectory)/.consul/
+              artifact: build-${{ join('-', option.sample) }}-consul
+              displayName: Artifacts Publish Consul
               condition: always()
