@@ -1,15 +1,37 @@
-// var
+variable "configuration_name" {
+  default = "gusztavvargadr-packet-samples-device-windows"
+}
+
+variable "project_name" {
+  default = "default"
+}
+
+variable "device_facility" {
+  default = "ewr1"
+}
+
+variable "device_plan" {
+  default = "t1.small.x86"
+}
+
+variable "device_os_name" {
+  default = "Windows 2016 Standard"
+}
+
+variable "device_user_data_file_path" {
+  default = "device_userdata.ps1"
+}
 
 locals {
-  configuration_name = "gusztavvargadr-packet-samples-device-windows"
+  configuration_name = "${var.configuration_name}"
   deployment_name    = "${local.configuration_name}-${terraform.workspace}"
 
-  project_name = "core"
+  project_name = "${var.project_name}"
 
-  device_facility            = "ewr1"
-  device_plan                = "t1.small.x86"
-  device_os_name             = "Windows 2016 Standard"
-  device_user_data_file_path = "${path.root}/device_userdata.ps1"
+  device_facility            = "${var.device_facility}"
+  device_plan                = "${var.device_plan}"
+  device_os_name             = "${var.device_os_name}"
+  device_user_data_file_path = "${path.root}/${var.device_user_data_file_path}"
 }
 
 output "device_id" {

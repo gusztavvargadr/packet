@@ -1,6 +1,6 @@
 locals {
-  key_public_file_path  = "${path.root}/.terraform/outputs/${local.key_name}.pub"
-  key_private_file_path = "${path.root}/.terraform/outputs/${local.key_name}"
+  key_public_file_path  = "${path.root}/.terraform/output/${local.key_name}.pub"
+  key_private_file_path = "${path.root}/.terraform/output/${local.key_name}"
 }
 
 resource "local_file" "key_public" {

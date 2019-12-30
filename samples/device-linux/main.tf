@@ -1,13 +1,37 @@
+variable "configuration_name" {
+  default = "gusztavvargadr-packet-samples-device-linux"
+}
+
+variable "project_name" {
+  default = "default"
+}
+
+variable "device_facility" {
+  default = "ewr1"
+}
+
+variable "device_plan" {
+  default = "t1.small.x86"
+}
+
+variable "device_os_name" {
+  default = "Ubuntu 16.04 LTS"
+}
+
+variable "device_user_data_file_path" {
+  default = "device_userdata.sh"
+}
+
 locals {
-  configuration_name = "gusztavvargadr-packet-samples-device-linux"
+  configuration_name = "${var.configuration_name}"
   deployment_name    = "${local.configuration_name}-${terraform.workspace}"
 
-  project_name = "core"
+  project_name = "${var.project_name}"
 
-  device_facility            = "ewr1"
-  device_plan                = "t1.small.x86"
-  device_os_name             = "Ubuntu 16.04 LTS"
-  device_user_data_file_path = "${path.root}/device_userdata.sh"
+  device_facility            = "${var.device_facility}"
+  device_plan                = "${var.device_plan}"
+  device_os_name             = "${var.device_os_name}"
+  device_user_data_file_path = "${path.root}/${var.device_user_data_file_path}"
 }
 
 output "device_id" {

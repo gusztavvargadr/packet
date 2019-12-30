@@ -58,10 +58,7 @@ Task("Version")
     };
     var logsService = "gitversion";
 
-    var logsOutput = string.Join(
-      Environment.NewLine,
-      logsRunner.RunWithResult("logs", logsSettings, (items) => items.ToArray(), logsService)
-    );
+    var logsOutput = logsRunner.RunWithResult("logs", logsSettings, (items) => items.ToArray(), logsService).Last();
 
     dockerImageTag = logsOutput.Split('|')[1].Trim();
     Environment.SetEnvironmentVariable("DOCKER_IMAGE_TAG", dockerImageTag);
