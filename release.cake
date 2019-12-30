@@ -3,6 +3,16 @@
 Task("Restore")
   .IsDependentOn("Version")
   .Does(() => {
+    var settings = new DockerImagePullSettings {
+    };
+    var imageReference = $"{dockerRegistry}gusztavvargadr/packet/samples-{configuration}:{dockerImageTag}";
+
+    DockerPull(settings, imageReference);
+  });
+
+Task("Build")
+  .IsDependentOn("Restore")
+  .Does(() => {
     var settings = new DockerComposeRunSettings {
     };
     var service = "sample";
@@ -11,8 +21,13 @@ Task("Restore")
     DockerComposeRun(settings, service, command);
   });
 
-Task("Build")
-  .IsDependentOn("Restore")
+Task("Test")
+  .IsDependentOn("Build")
+  .Does(() => {
+  });
+
+Task("Package")
+  .IsDependentOn("Test")
   .Does(() => {
     var settings = new DockerComposeRunSettings {
     };
@@ -22,8 +37,8 @@ Task("Build")
     DockerComposeRun(settings, service, command);
   });
 
-Task("Test")
-  .IsDependentOn("Build")
+Task("Publish")
+  .IsDependentOn("Package")
   .Does(() => {
     var settings = new DockerComposeRunSettings {
     };
@@ -31,16 +46,6 @@ Task("Test")
     var command = "apply";
 
     DockerComposeRun(settings, service, command);
-  });
-
-Task("Package")
-  .IsDependentOn("Test")
-  .Does(() => {
-  });
-
-Task("Publish")
-  .IsDependentOn("Package")
-  .Does(() => {
   });
 
 RunTarget(target);

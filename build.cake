@@ -42,7 +42,7 @@ Task("Publish")
   .Does(() => {
     var settings = new DockerImagePushSettings {
     };
-    var imageReference = $"{dockerRegistry}gusztavvargadr/packet/samples/{configuration}:{dockerImageTag}";
+    var imageReference = $"{dockerRegistry}gusztavvargadr/packet/samples-{configuration}:{dockerImageTag}";
 
     DockerPush(settings, imageReference);
   });
