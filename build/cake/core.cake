@@ -47,24 +47,23 @@ Task("Version")
 
     DockerComposeUp(upSettings, upServices);
 
-    var runner = new GenericDockerComposeRunner<DockerComposeLogsSettings>(
+    var logsRunner = new GenericDockerComposeRunner<DockerComposeLogsSettings>(
       context.FileSystem,
       context.Environment,
       context.ProcessRunner,
       context.Tools
     );
-
     var logsSettings = new DockerComposeLogsSettings {
       NoColor = true
     };
     var logsService = "gitversion";
 
-    dockerImageTag = string.Join(
+    var logsOutput = string.Join(
       Environment.NewLine,
-      runner.RunWithResult("logs", logsSettings, (items) => items.ToArray(), logsService)
-    ).Split('|')[1].Trim();
-    Information(dockerImageTag);
+      logsRunner.RunWithResult("logs", logsSettings, (items) => items.ToArray(), logsService)
+    );
 
+    dockerImageTag = logsOutput.Split('|')[1].Trim();
     Environment.SetEnvironmentVariable("DOCKER_IMAGE_TAG", dockerImageTag);
   });
 
