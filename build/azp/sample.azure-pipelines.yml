@@ -30,10 +30,12 @@ stages:
 
             - script: |
                 dotnet cake build.cake --target=clean --configuration=${{ join('-', option.sample) }}
-
-                ls -Ral ./.registry/
-                ls -Ral ./.consul/
               displayName: Build Clean
+              condition: always()
+
+            - script: |
+                chmod -R +rX ./.registry/
+              displayName: Artifacts Prepare Registry
               condition: always()
 
             - publish: $(Build.SourcesDirectory)/.registry/
@@ -77,7 +79,12 @@ stages:
               displayName: Build Clean
               condition: always()
 
-            # - publish: $(Build.SourcesDirectory)/.consul/
-            #   artifact: build-${{ join('-', option.sample) }}-consul
-            #   displayName: Artifacts Publish Consul
-            #   condition: always()
+            - script: |
+                chmod -R +rX ./.consul/
+              displayName: Artifacts Prepare Consul
+              condition: always()
+
+            - publish: $(Build.SourcesDirectory)/.consul/
+              artifact: test-${{ join('-', option.sample) }}-consul
+              displayName: Artifacts Publish Consul
+              condition: always()
