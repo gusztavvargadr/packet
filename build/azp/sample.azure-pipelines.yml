@@ -34,7 +34,9 @@ stages:
               condition: always()
 
             - script: |
-                chmod -R +rX ./.registry/
+                whoami
+                ls -Ral ./.registry/
+                sudo chmod -R +rX ./.registry/
               displayName: Artifacts Prepare Registry
               condition: always()
 
@@ -80,7 +82,9 @@ stages:
               condition: always()
 
             - script: |
-                chmod -R +rX ./.consul/
+                whoami
+                ls -Ral ./.consul/
+                sudo chmod -R +rX ./.consul/
               displayName: Artifacts Prepare Consul
               condition: always()
 
