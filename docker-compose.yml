@@ -7,7 +7,7 @@ services:
       dockerfile: ./gitversion.Dockerfile
 
     volumes:
-      - ./:/work/
+      - ${REPO_DIR}/:/work/
 
   registry:
     build:
@@ -15,7 +15,7 @@ services:
       dockerfile: ./registry.Dockerfile
 
     volumes:
-      - ./.registry/data/:/var/lib/registry/
+      - ${REPO_DIR}/.registry/data/:/var/lib/registry/
 
     ports:
       - 5000:5000
@@ -26,7 +26,7 @@ services:
       dockerfile: ./consul.Dockerfile
 
     volumes:
-      - ./.consul/data/:/consul/data/
+      - ${REPO_DIR}/.consul/data/:/consul/data/
 
     ports:
       - 8500:8500
@@ -40,7 +40,7 @@ services:
         SAMPLE_NAME: ${SAMPLE_NAME}
 
     volumes:
-      - ./samples/${SAMPLE_NAME}/.terraform/:/opt/gusztavvargadr/packet/samples/${SAMPLE_NAME}/.terraform/
+      - ${REPO_DIR}/samples/${SAMPLE_NAME}/.terraform/:/opt/gusztavvargadr/packet/samples/${SAMPLE_NAME}/.terraform/
 
     environment:
       CONSUL_HTTP_ADDR:
