@@ -21,15 +21,9 @@ Task("Test")
     var settings = new DockerComposeRunSettings {
     };
     var service = "sample";
+    var command = "init -backend=false";
 
-    var initCommand = "init";
-    var initArgs = new [] { "-backend=false" };
-
-    DockerComposeRun(settings, service, initCommand, initArgs);
-
-    var validateCommand = "validate";
-
-    DockerComposeRun(settings, service, validateCommand);
+    DockerComposeRun(settings, service, command);
   });
 
 Task("Package")

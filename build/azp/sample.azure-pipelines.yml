@@ -26,11 +26,11 @@ stages:
 
             - script: |
                 dotnet cake build.cake --target=publish --configuration=${{ join('-', option.sample) }}
-              displayName: Build Publish
+              displayName: Cake Publish
 
             - script: |
                 dotnet cake build.cake --target=clean --configuration=${{ join('-', option.sample) }}
-              displayName: Build Clean
+              displayName: Cake Clean
               condition: always()
 
             - script: |
@@ -48,8 +48,8 @@ stages:
 
     jobs:
       - ${{ each option in parameters.options }}:
-        - job: test_${{ join('_', option.sample) }}
-          displayName: Test ${{ join('-', option.sample) }}
+        - job: deploy_${{ join('_', option.sample) }}
+          displayName: Deploy ${{ join('-', option.sample) }}
 
           pool:
             vmImage: ubuntu-16.04
@@ -71,12 +71,12 @@ stages:
               displayName: .NET Tools Init
 
             - script: |
-                dotnet cake deploy.cake --target=test --configuration=${{ join('-', option.sample) }}
-              displayName: Build Test
+                dotnet cake deploy.cake --target=publish --configuration=${{ join('-', option.sample) }}
+              displayName: Cake Publish
 
             - script: |
                 dotnet cake deploy.cake --target=clean --configuration=${{ join('-', option.sample) }}
-              displayName: Build Clean
+              displayName: Cake Clean
               condition: always()
 
             - script: |
@@ -85,6 +85,6 @@ stages:
               condition: always()
 
             - publish: $(Build.SourcesDirectory)/.consul/
-              artifact: test-${{ join('-', option.sample) }}-consul
+              artifact: deploy-${{ join('-', option.sample) }}-consul
               displayName: Artifacts Publish Consul
               condition: always()

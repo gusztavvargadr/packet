@@ -18,23 +18,17 @@ Task("Build")
 Task("Test")
   .IsDependentOn("Build")
   .Does(() => {
-    {
-      var settings = new DockerComposeRunSettings {
-      };
-      var service = "sample";
-      var command = "init";
+    var settings = new DockerComposeRunSettings {
+    };
+    var service = "sample";
 
-      DockerComposeRun(settings, service, command);
-    }
+    var initCommand = "init";
 
-    {
-      var settings = new DockerComposeRunSettings {
-      };
-      var service = "sample";
-      var command = "plan";
+    DockerComposeRun(settings, service, initCommand);
 
-      DockerComposeRun(settings, service, command);
-    }
+    var validateCommand = "validate";
+
+    DockerComposeRun(settings, service, validateCommand);
   });
 
 Task("Package")
