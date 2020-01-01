@@ -24,8 +24,8 @@ Task("Test")
     var initCommand = "init";
     DockerComposeRun(settings, service, initCommand);
 
-    var workspaceCommand = "workspace list";
-    DockerComposeRun(settings, service, workspaceCommand);
+    var planCommand = "plan";
+    DockerComposeRun(settings, service, planCommand);
   });
 
 Task("Package")

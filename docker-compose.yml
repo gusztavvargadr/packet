@@ -32,7 +32,7 @@ services:
       - 8500:8500
 
   sample:
-    image: ${DOCKER_REGISTRY}packet-samples-${SAMPLE_NAME}:${DOCKER_IMAGE_TAG}
+    image: ${DOCKER_REGISTRY}sample-${SAMPLE_NAME}:${DOCKER_IMAGE_TAG}
     build:
       context: ./
       dockerfile: ./build/docker/sample.Dockerfile
@@ -40,14 +40,8 @@ services:
         SAMPLE_NAME: ${SAMPLE_NAME}
 
     volumes:
-      - ${REPO_DIR}/samples/${SAMPLE_NAME}/.terraform/:/opt/packet/samples/${SAMPLE_NAME}/.terraform/
+      - ${REPO_DIR}/samples/${SAMPLE_NAME}/.terraform/:/opt/terraform/samples/${SAMPLE_NAME}/.terraform/
 
     environment:
       CONSUL_HTTP_ADDR:
       PACKET_AUTH_TOKEN:
-      TF_VAR_configuration_name:
-      TF_VAR_project_name:
-      TF_VAR_device_facility:
-      TF_VAR_device_plan:
-      TF_VAR_device_os_name:
-      TF_VAR_device_user_data_file_path:

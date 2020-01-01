@@ -4,7 +4,6 @@
 # Licensed under the MIT License. See https://go.microsoft.com/fwlink/?linkid=2090316 for license information.
 #-------------------------------------------------------------------------------------------------------------
 
-# FROM library/ubuntu:16.04
 FROM mcr.microsoft.com/dotnet/core/sdk:2.1
 
 ENV DEBIAN_FRONTEND=noninteractive

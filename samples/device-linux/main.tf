@@ -1,5 +1,5 @@
 variable "configuration_name" {
-  default = "packet-samples-device-linux"
+  default = "sample-device-linux"
 }
 
 variable "project_name" {

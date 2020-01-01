@@ -12,7 +12,7 @@ var dockerRegistry = Argument("docker-registry", EnvironmentVariable("DOCKER_REG
 var dockerImageTag = Argument("docker-image-tag", EnvironmentVariable("DOCKER_IMAGE_TAG", defaultDockerImageTag));
 var consulHttpAddr = Argument("consul-http-addr", EnvironmentVariable("CONSUL_HTTP_ADDR", defaultConsulHttpAddr));
 
-private string GetDockerImageReference() => $"{dockerRegistry}packet-samples-{configuration}:{dockerImageTag}";
+private string GetDockerImageReference() => $"{dockerRegistry}sample-{configuration}:{dockerImageTag}";
 
 Task("Init")
   .Does(() => {

@@ -15,9 +15,9 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 
     environment:
+      REPO_DIR:
       DOCKER_REGISTRY:
       CONSUL_HTTP_ADDR:
       PACKET_AUTH_TOKEN:
-      REPO_DIR: /host_mnt/c/Users/guszt/Source/gusztavvargadr/packet
 
     command: sleep infinity
