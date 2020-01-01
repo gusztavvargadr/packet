@@ -1,5 +1,5 @@
 variable "deployment_name" {
-  default = "packet-samples-device-default"
+  default = "packet-device-default"
 }
 
 variable "project_name" {

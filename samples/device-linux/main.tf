@@ -1,5 +1,5 @@
 variable "configuration_name" {
-  default = "gusztavvargadr-packet-samples-device-linux"
+  default = "packet-samples-device-linux"
 }
 
 variable "project_name" {

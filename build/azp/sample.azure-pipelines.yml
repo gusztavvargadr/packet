@@ -71,11 +71,11 @@ stages:
               displayName: .NET Tools Init
 
             - script: |
-                dotnet cake release.cake --target=test --configuration=${{ join('-', option.sample) }}
+                dotnet cake deploy.cake --target=test --configuration=${{ join('-', option.sample) }}
               displayName: Build Test
 
             - script: |
-                dotnet cake release.cake --target=clean --configuration=${{ join('-', option.sample) }}
+                dotnet cake deploy.cake --target=clean --configuration=${{ join('-', option.sample) }}
               displayName: Build Clean
               condition: always()
 

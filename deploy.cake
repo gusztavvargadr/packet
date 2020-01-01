@@ -3,33 +3,38 @@
 Task("Restore")
   .IsDependentOn("Version")
   .Does(() => {
+    var settings = new DockerImagePullSettings {
+    };
+    var imageReference = GetDockerImageReference();
+
+    DockerPull(settings, imageReference);
   });
 
 Task("Build")
   .IsDependentOn("Restore")
   .Does(() => {
-    var settings = new DockerComposeBuildSettings {
-    };
-    var services = new [] { "sample" };
-
-    DockerComposeBuild(settings, services);
   });
 
 Task("Test")
   .IsDependentOn("Build")
   .Does(() => {
-    var settings = new DockerComposeRunSettings {
-    };
-    var service = "sample";
+    {
+      var settings = new DockerComposeRunSettings {
+      };
+      var service = "sample";
+      var command = "init";
 
-    var initCommand = "init";
-    var initArgs = new [] { "-backend=false" };
+      DockerComposeRun(settings, service, command);
+    }
 
-    DockerComposeRun(settings, service, initCommand, initArgs);
+    {
+      var settings = new DockerComposeRunSettings {
+      };
+      var service = "sample";
+      var command = "plan";
 
-    var validateCommand = "validate";
-
-    DockerComposeRun(settings, service, validateCommand);
+      DockerComposeRun(settings, service, command);
+    }
   });
 
 Task("Package")

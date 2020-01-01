@@ -1,16 +1,18 @@
 #addin nuget:?package=Cake.Docker&version=0.11.0
 
-var target = Argument("target", "Publish");
-var configuration = Argument("configuration", "device-linux");
-
+var defaulTarget = "Publish";
+var defaultConfiguration = "device-linux";
 var defaultDockerRegistry = "localhost:5000/";
-var dockerRegistry = Argument("docker-registry", EnvironmentVariable("DOCKER_REGISTRY", defaultDockerRegistry));
-
 var defaultDockerImageTag = "latest";
-var dockerImageTag = Argument("docker-image-tag", EnvironmentVariable("DOCKER_IMAGE_TAG", defaultDockerImageTag));
-
 var defaultConsulHttpAddr = "consul:8500";
+
+var target = Argument("target", defaulTarget);
+var configuration = Argument("configuration", defaultConfiguration);
+var dockerRegistry = Argument("docker-registry", EnvironmentVariable("DOCKER_REGISTRY", defaultDockerRegistry));
+var dockerImageTag = Argument("docker-image-tag", EnvironmentVariable("DOCKER_IMAGE_TAG", defaultDockerImageTag));
 var consulHttpAddr = Argument("consul-http-addr", EnvironmentVariable("CONSUL_HTTP_ADDR", defaultConsulHttpAddr));
+
+private string GetDockerImageReference() => $"{dockerRegistry}packet-samples-{configuration}:{dockerImageTag}";
 
 Task("Init")
   .Does(() => {
