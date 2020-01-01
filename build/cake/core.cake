@@ -24,7 +24,6 @@ Task("Init")
         DetachedMode = true
       };
       var services = new [] { "registry" };
-
       DockerComposeUp(settings, services);
     }
 
@@ -33,7 +32,6 @@ Task("Init")
         DetachedMode = true
       };
       var services = new [] { "consul" };
-
       DockerComposeUp(settings, services);
     }
 
@@ -46,7 +44,6 @@ Task("Version")
     var upSettings = new DockerComposeUpSettings {
     };
     var upServices = new [] { "gitversion" };
-
     DockerComposeUp(upSettings, upServices);
 
     var logsRunner = new GenericDockerComposeRunner<DockerComposeLogsSettings>(
@@ -59,7 +56,6 @@ Task("Version")
       NoColor = true
     };
     var logsService = "gitversion";
-
     var logsOutput = logsRunner.RunWithResult("logs", logsSettings, (items) => items.ToArray(), logsService).Last();
 
     dockerImageTag = logsOutput.Split('|')[1].Trim();
@@ -72,6 +68,5 @@ Task("Clean")
     var settings = new DockerComposeDownSettings {
       Rmi = "all"
     };
-
     DockerComposeDown(settings);
   });

@@ -6,7 +6,6 @@ Task("Restore")
     var settings = new DockerImagePullSettings {
     };
     var imageReference = GetDockerImageReference();
-
     DockerPull(settings, imageReference);
   });
 
@@ -23,12 +22,10 @@ Task("Test")
     var service = "sample";
 
     var initCommand = "init";
-
     DockerComposeRun(settings, service, initCommand);
 
-    var validateCommand = "validate";
-
-    DockerComposeRun(settings, service, validateCommand);
+    var workspaceCommand = "workspace list";
+    DockerComposeRun(settings, service, workspaceCommand);
   });
 
 Task("Package")
@@ -42,7 +39,6 @@ Task("Publish")
     var settings = new DockerImagePushSettings {
     };
     var imageReference = GetDockerImageReference();
-
     DockerPush(settings, imageReference);
   });
 

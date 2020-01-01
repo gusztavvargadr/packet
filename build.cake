@@ -11,7 +11,6 @@ Task("Build")
     var settings = new DockerComposeBuildSettings {
     };
     var services = new [] { "sample" };
-
     DockerComposeBuild(settings, services);
   });
 
@@ -21,9 +20,12 @@ Task("Test")
     var settings = new DockerComposeRunSettings {
     };
     var service = "sample";
-    var command = "init -backend=false";
 
-    DockerComposeRun(settings, service, command);
+    var initCommand = "init -backend=false";
+    DockerComposeRun(settings, service, initCommand);
+
+    var validateCommand = "validate";
+    DockerComposeRun(settings, service, validateCommand);
   });
 
 Task("Package")
@@ -37,7 +39,6 @@ Task("Publish")
     var settings = new DockerImagePushSettings {
     };
     var imageReference = GetDockerImageReference();
-
     DockerPush(settings, imageReference);
   });
 

@@ -35,12 +35,12 @@ stages:
 
             - script: |
                 sudo chmod -R o+rX ./.registry/
-              displayName: Artifacts Prepare Registry
+              displayName: Artifacts Registry Prepare
               condition: always()
 
             - publish: $(Build.SourcesDirectory)/.registry/
               artifact: build-${{ join('-', option.sample) }}-registry
-              displayName: Artifacts Publish Registry
+              displayName: Artifacts Registry Publish
               condition: always()
 
   - stage: acceptance
@@ -59,7 +59,7 @@ stages:
               inputs:
                 artifact: build-${{ join('-', option.sample) }}-registry
                 path: $(Build.SourcesDirectory)/.registry/
-              displayName: Artifacts Download Registry
+              displayName: Artifacts Registry Download
 
             - script: |
                 dotnet --info
@@ -81,10 +81,10 @@ stages:
 
             - script: |
                 sudo chmod -R o+rX ./.consul/
-              displayName: Artifacts Prepare Consul
+              displayName: Artifacts Consul Prepare
               condition: always()
 
             - publish: $(Build.SourcesDirectory)/.consul/
               artifact: deploy-${{ join('-', option.sample) }}-consul
-              displayName: Artifacts Publish Consul
+              displayName: Artifacts Consul Publish
               condition: always()
