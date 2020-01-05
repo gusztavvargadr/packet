@@ -14,7 +14,13 @@ stages:
           pool:
             vmImage: ubuntu-16.04
 
+          workspace:
+            clean: all
+
           steps:
+            - checkout: self
+              submodules: recursive
+
             - script: |
                 dotnet --info
 
@@ -54,7 +60,13 @@ stages:
           pool:
             vmImage: ubuntu-16.04
 
+          workspace:
+            clean: all
+
           steps:
+            - checkout: self
+              submodules: recursive
+
             - task: DownloadPipelineArtifact@2
               inputs:
                 artifact: build-${{ join('-', option.sample) }}-registry
