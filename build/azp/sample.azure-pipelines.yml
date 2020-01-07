@@ -2,9 +2,6 @@ parameters:
   options: []
     # - sample: [ sample-name-part-1, sample-name-part-2, ... ]
 
-variables:
-  - group: pipeline
-
 stages:
   - stage: commit
     displayName: Commit

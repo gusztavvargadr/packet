@@ -1,5 +1,8 @@
 pr: none
 
+variables:
+  - group: pipeline
+
 stages:
   - template: ./build/azp/sample.azure-pipelines.yml
     parameters:
