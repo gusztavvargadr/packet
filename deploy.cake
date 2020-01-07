@@ -26,7 +26,7 @@ Task("Test")
     };
     var service = "sample";
     var command = "plan";
-    DockerComposeRun(settings, service, planCommand);
+    DockerComposeRun(settings, service, command);
   });
 
 Task("Package")
