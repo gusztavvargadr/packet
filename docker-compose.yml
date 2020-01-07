@@ -9,6 +9,17 @@ services:
     volumes:
       - ${REPO_DIR}/:/work/
 
+  consul:
+    build:
+      context: ./build/docker/
+      dockerfile: ./consul.Dockerfile
+
+    volumes:
+      - ${REPO_DIR}/.consul/data/:/consul/data/
+
+    ports:
+      - 8500:8500
+
   registry:
     build:
       context: ./build/docker/
@@ -32,17 +43,6 @@ services:
       TF_CLI_CONFIG_FILE: /root/.terraform.d/.terraformrc
       CONSUL_HTTP_ADDR:
       PACKET_AUTH_TOKEN:
-
-  consul:
-    build:
-      context: ./build/docker/
-      dockerfile: ./consul.Dockerfile
-
-    volumes:
-      - ${REPO_DIR}/.consul/data/:/consul/data/
-
-    ports:
-      - 8500:8500
 
   sample:
     image: ${DOCKER_REGISTRY}sample-${SAMPLE_NAME}:${DOCKER_IMAGE_TAG}

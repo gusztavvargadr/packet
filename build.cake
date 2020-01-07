@@ -3,10 +3,10 @@
 Task("Restore")
   .IsDependentOn("Version")
   .Does(() => {
-    var settings = new DockerComposePullSettings {
+    var settings = new DockerComposeBuildSettings {
     };
     var services = new [] { "terraform" };
-    DockerComposePull(settings, services);
+    DockerComposeBuild(settings, services);
   });
 
 Task("Build")

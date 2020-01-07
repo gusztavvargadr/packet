@@ -85,6 +85,8 @@ stages:
             - script: |
                 dotnet cake deploy.cake --target=test --configuration=${{ join('-', option.sample) }}
               displayName: Cake Test
+              env:
+                PACKET_AUTH_TOKEN: $(packet-auth-token)
 
             - script: |
                 dotnet cake deploy.cake --target=clean --configuration=${{ join('-', option.sample) }}

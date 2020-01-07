@@ -19,12 +19,11 @@ Task("Init")
     StartProcess("docker", "version");
     StartProcess("docker-compose", "version");
 
-    if (dockerRegistry == defaultDockerRegistry) {
-      var settings = new DockerComposeUpSettings {
-        DetachedMode = true
+    {
+      var settings = new DockerComposeBuildSettings {
       };
-      var services = new [] { "registry" };
-      DockerComposeUp(settings, services);
+      var services = new [] { "gitversion" };
+      DockerComposeBuild(settings, services);
     }
 
     if (consulHttpAddr == defaultConsulHttpAddr) {
@@ -32,6 +31,14 @@ Task("Init")
         DetachedMode = true
       };
       var services = new [] { "consul" };
+      DockerComposeUp(settings, services);
+    }
+
+    if (dockerRegistry == defaultDockerRegistry) {
+      var settings = new DockerComposeUpSettings {
+        DetachedMode = true
+      };
+      var services = new [] { "registry" };
       DockerComposeUp(settings, services);
     }
 
