@@ -28,7 +28,7 @@ stages:
                 dotnet tool install Cake.Tool --global --version 0.33.0
 
                 dotnet tool list --global
-              displayName: .NET Tools Init
+              displayName: .NET Init
 
             - script: |
                 dotnet cake build.cake --target=publish --configuration=${{ join('-', option.sample) }}
@@ -52,10 +52,13 @@ stages:
   - stage: acceptance
     displayName: Acceptance
 
+    variables:
+      - group: acceptance
+
     jobs:
       - ${{ each option in parameters.options }}:
-        - job: deploy_${{ join('_', option.sample) }}
-          displayName: Deploy ${{ join('-', option.sample) }}
+        - job: test_${{ join('_', option.sample) }}
+          displayName: Test ${{ join('-', option.sample) }}
 
           pool:
             vmImage: ubuntu-16.04
@@ -80,23 +83,13 @@ stages:
                 dotnet tool install Cake.Tool --global --version 0.33.0
 
                 dotnet tool list --global
-              displayName: .NET Tools Init
+              displayName: .NET Init
 
             - script: |
-                dotnet cake deploy.cake --target=publish --configuration=${{ join('-', option.sample) }}
-              displayName: Cake Publish
+                dotnet cake deploy.cake --target=test --configuration=${{ join('-', option.sample) }}
+              displayName: Cake Test
 
             - script: |
                 dotnet cake deploy.cake --target=clean --configuration=${{ join('-', option.sample) }}
               displayName: Cake Clean
-              condition: always()
-
-            - script: |
-                sudo chmod -R o+rX ./.consul/
-              displayName: Artifacts Consul Prepare
-              condition: always()
-
-            - publish: $(Build.SourcesDirectory)/.consul/
-              artifact: deploy-${{ join('-', option.sample) }}-consul
-              displayName: Artifacts Consul Publish
               condition: always()

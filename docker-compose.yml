@@ -20,6 +20,19 @@ services:
     ports:
       - 5000:5000
 
+  terraform:
+    build:
+      context: ./build/docker/
+      dockerfile: ./terraform.Dockerfile
+
+    volumes:
+      - ~/.terraform.d/:/root/.terraform.d/
+
+    environment:
+      TF_CLI_CONFIG_FILE: /root/.terraform.d/.terraformrc
+      CONSUL_HTTP_ADDR:
+      PACKET_AUTH_TOKEN:
+
   consul:
     build:
       context: ./build/docker/
@@ -30,19 +43,6 @@ services:
 
     ports:
       - 8500:8500
-
-  terraform:
-    image: hashicorp/terraform:0.12.18
-
-    volumes:
-      - ~/.terraform.d/:/root/.terraform.d/
-
-    environment:
-      TF_CLI_CONFIG_FILE: /root/.terraform.d/.terraformrc
-      CONSUL_HTTP_ADDR:
-      PACKET_AUTH_TOKEN:
-
-    command: -help
 
   sample:
     image: ${DOCKER_REGISTRY}sample-${SAMPLE_NAME}:${DOCKER_IMAGE_TAG}

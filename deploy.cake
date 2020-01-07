@@ -12,6 +12,11 @@ Task("Restore")
 Task("Build")
   .IsDependentOn("Restore")
   .Does(() => {
+    var settings = new DockerComposeRunSettings {
+    };
+    var service = "sample";
+    var command = "init";
+    DockerComposeRun(settings, service, command);
   });
 
 Task("Test")
@@ -20,11 +25,7 @@ Task("Test")
     var settings = new DockerComposeRunSettings {
     };
     var service = "sample";
-
-    var initCommand = "init";
-    DockerComposeRun(settings, service, initCommand);
-
-    var planCommand = "plan";
+    var command = "plan";
     DockerComposeRun(settings, service, planCommand);
   });
 
