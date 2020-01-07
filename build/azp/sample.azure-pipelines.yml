@@ -2,6 +2,9 @@ parameters:
   options: []
     # - sample: [ sample-name-part-1, sample-name-part-2, ... ]
 
+variables:
+  - group: pipeline
+
 stages:
   - stage: commit
     displayName: Commit
@@ -51,9 +54,6 @@ stages:
 
   - stage: acceptance
     displayName: Acceptance
-
-    variables:
-      - group: acceptance
 
     jobs:
       - ${{ each option in parameters.options }}:
