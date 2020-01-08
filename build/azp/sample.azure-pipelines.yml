@@ -3,57 +3,12 @@ parameters:
     # - name: [ sample-name-part-1, sample-name-part-2, ... ]
 
 stages:
-  - stage: commit
-    displayName: Commit
-
-    jobs:
-      - ${{ each sample in parameters.samples }}:
-        - job: build_${{ join('_', sample.name) }}
-          displayName: Build ${{ join('-', sample.name) }}
-
-          pool:
-            vmImage: ubuntu-16.04
-
-          workspace:
-            clean: all
-
-          steps:
-            - checkout: self
-              submodules: recursive
-
-            - script: |
-                dotnet --info
-
-                echo "##vso[task.setvariable variable=PATH;]$PATH:~/.dotnet/tools"
-                dotnet tool install Cake.Tool --global --version 0.33.0
-
-                dotnet tool list --global
-              displayName: .NET Init
-
-            - script: |
-                dotnet cake build.cake --target=publish
-              env:
-                SAMPLE_NAME: ${{ join('-', sample.name) }}
-                PACKET_AUTH_TOKEN: $(packet-auth-token)
-              displayName: Cake Publish
-
-            - script: |
-                dotnet cake build.cake --target=clean
-              env:
-                SAMPLE_NAME: ${{ join('-', sample.name) }}
-                PACKET_AUTH_TOKEN: $(packet-auth-token)
-              displayName: Cake Clean
-              condition: always()
-
-            - script: |
-                sudo chmod -R o+rX ./.registry/
-              displayName: Artifacts Registry Prepare
-              condition: always()
-
-            - publish: $(Build.SourcesDirectory)/.registry/
-              artifact: build-${{ join('-', sample.name) }}-registry
-              displayName: Artifacts Registry Publish
-              condition: always()
+  - template: ./sample.azure-pipelines.build.yml
+    parameters:
+      stages:
+        - name: commit
+          displayName: Commit
+          samples: ${{ parameters.samples }}
 
   - template: ./sample.azure-pipelines.deploy.yml
     parameters:
