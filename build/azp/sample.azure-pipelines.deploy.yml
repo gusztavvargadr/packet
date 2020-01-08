@@ -45,7 +45,7 @@ stages:
             - task: Docker@2
               inputs:
                 command: login
-                containerRegistry: ${{ options.containerRegistry }}
+                containerRegistry: ${{ option.containerRegistry }}
               displayName: Docker Login
               condition: and(succeeded(), ne(variables['docker-registry-publish'], ''))
 
@@ -69,6 +69,6 @@ stages:
             - task: Docker@2
               inputs:
                 command: logout
-                containerRegistry: ${{ options.containerRegistry }}
+                containerRegistry: ${{ option.containerRegistry }}
               displayName: Docker Logout
               condition: and(ne(variables['docker-registry-publish'], ''))
