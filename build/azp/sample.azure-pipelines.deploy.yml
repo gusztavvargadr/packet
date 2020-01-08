@@ -2,14 +2,16 @@ parameters:
   stages: []
     # - name: stage-name
     #   displayName: stage-display-name
-    #   containerRegistry: container-registry-name
     #   samples:
     #     - name: [ sample-name-part-1, sample-name-part-2, ... ]
+    #   containerRegistry: container-registry-name
+    #   condition: condition-expression
 
 stages:
   - ${{ each stage in parameters.stages }}:
     - stage: ${{ stage.name }}
       displayName: ${{ stage.displayName }}
+      condition: ${{ stage.condition }}
 
       variables:
         - group: stage-${{ stage.name }}
