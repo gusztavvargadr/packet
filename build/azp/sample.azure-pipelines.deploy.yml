@@ -2,8 +2,9 @@ parameters:
   options: []
     # - name: stage-name
     #   displayName: stage-display-name
-    #   sample: [ sample-name-part-1, sample-name-part-2, ... ]
     #   containerRegistry: container-registry-name
+    #   samples:
+    #     - name: [ sample-name-part-1, sample-name-part-2, ... ]
 
 stages:
   - ${{ each option in parameters.options }}:
@@ -14,61 +15,62 @@ stages:
         - group: stage-${{ option.name }}
 
       jobs:
-        - job: test_${{ join('_', option.sample) }}
-          displayName: Test ${{ join('-', option.sample) }}
+        - ${{ each sample in option.samples }}:
+          - job: test_${{ join('_', sample.name) }}
+            displayName: Test ${{ join('-', sample.name) }}
 
-          pool:
-            vmImage: ubuntu-16.04
+            pool:
+              vmImage: ubuntu-16.04
 
-          workspace:
-            clean: all
+            workspace:
+              clean: all
 
-          steps:
-            - checkout: self
-              submodules: recursive
+            steps:
+              - checkout: self
+                submodules: recursive
 
-            - task: DownloadPipelineArtifact@2
-              inputs:
-                artifact: build-${{ join('-', option.sample) }}-registry
-                path: $(Build.SourcesDirectory)/.registry/
-              displayName: Artifacts Registry Download
+              - task: DownloadPipelineArtifact@2
+                inputs:
+                  artifact: build-${{ join('-', sample.name) }}-registry
+                  path: $(Build.SourcesDirectory)/.registry/
+                displayName: Artifacts Registry Download
 
-            - script: |
-                dotnet --info
+              - script: |
+                  dotnet --info
 
-                echo "##vso[task.setvariable variable=PATH;]$PATH:~/.dotnet/tools"
-                dotnet tool install Cake.Tool --global --version 0.33.0
+                  echo "##vso[task.setvariable variable=PATH;]$PATH:~/.dotnet/tools"
+                  dotnet tool install Cake.Tool --global --version 0.33.0
 
-                dotnet tool list --global
-              displayName: .NET Init
+                  dotnet tool list --global
+                displayName: .NET Init
 
-            - task: Docker@2
-              inputs:
-                command: login
-                containerRegistry: ${{ option.containerRegistry }}
-              displayName: Docker Login
-              condition: and(succeeded(), ne(variables['docker-registry-publish'], ''))
+              - task: Docker@2
+                inputs:
+                  command: login
+                  containerRegistry: ${{ option.containerRegistry }}
+                displayName: Docker Login
+                condition: and(succeeded(), ne(variables['docker-registry-publish'], ''))
 
-            - script: |
-                dotnet cake deploy.cake --target=publish
-              displayName: Cake Publish
-              env:
-                SAMPLE_NAME: ${{ join('-', option.sample) }}
-                PACKET_AUTH_TOKEN: $(packet-auth-token)
-                DOCKER_REGISTRY_PUBLISH: $(docker-registry-publish)
+              - script: |
+                  dotnet cake deploy.cake --target=publish
+                displayName: Cake Publish
+                env:
+                  SAMPLE_NAME: ${{ join('-', sample.name) }}
+                  PACKET_AUTH_TOKEN: $(packet-auth-token)
+                  DOCKER_REGISTRY_PUBLISH: $(docker-registry-publish)
 
-            - script: |
-                dotnet cake deploy.cake --target=clean
-              env:
-                SAMPLE_NAME: ${{ join('-', option.sample) }}
-                PACKET_AUTH_TOKEN: $(packet-auth-token)
-                DOCKER_REGISTRY_PUBLISH: $(docker-registry-publish)
-              displayName: Cake Clean
-              condition: always()
+              - script: |
+                  dotnet cake deploy.cake --target=clean
+                env:
+                  SAMPLE_NAME: ${{ join('-', sample.name) }}
+                  PACKET_AUTH_TOKEN: $(packet-auth-token)
+                  DOCKER_REGISTRY_PUBLISH: $(docker-registry-publish)
+                displayName: Cake Clean
+                condition: always()
 
-            - task: Docker@2
-              inputs:
-                command: logout
-                containerRegistry: ${{ option.containerRegistry }}
-              displayName: Docker Logout
-              condition: and(ne(variables['docker-registry-publish'], ''))
+              - task: Docker@2
+                inputs:
+                  command: logout
+                  containerRegistry: ${{ option.containerRegistry }}
+                displayName: Docker Logout
+                condition: and(ne(variables['docker-registry-publish'], ''))

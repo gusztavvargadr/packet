@@ -58,17 +58,17 @@ stages:
   - template: ./sample.azure-pipelines.deploy.yml
     parameters:
       options:
-        - ${{ each option in parameters.options }}:
-          - name: acceptance
-            displayName: Acceptance
-            containerRegistry: github-gusztavvargadr
-            sample: option.sample
+        - name: acceptance
+          displayName: Acceptance
+          containerRegistry: github-gusztavvargadr
+          samples:
+          - ${{ each option in parameters.options }}:
+            - sample: ${{ option.sample }}
 
-  - template: ./sample.azure-pipelines.deploy.yml
-    parameters:
-      options:
-        - ${{ each option in parameters.options }}:
-          - name: staging
-            displayName: Staging
-            containerRegistry: github-gusztavvargadr
-            sample: option.sample
+        - name: staging
+          displayName: Staging
+          containerRegistry: github-gusztavvargadr
+          samples:
+            - ${{ each option in parameters.options }}:
+              - sample: ${{ option.sample }}
+  
