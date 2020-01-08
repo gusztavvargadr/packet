@@ -52,6 +52,9 @@ stages:
   - stage: acceptance
     displayName: Acceptance
 
+    variables:
+      - group: stage-acceptance
+
     jobs:
       - ${{ each option in parameters.options }}:
         - job: test_${{ join('_', option.sample) }}
@@ -86,6 +89,61 @@ stages:
                 dotnet cake deploy.cake --target=test --configuration=${{ join('-', option.sample) }}
               displayName: Cake Test
               env:
+                DOCKER_REGISTRY_PUBLISH: $(docker-registry-publish)
+                PACKET_AUTH_TOKEN: $(packet-auth-token)
+
+            - script: |
+                dotnet cake deploy.cake --target=clean --configuration=${{ join('-', option.sample) }}
+              displayName: Cake Clean
+              condition: always()
+
+  - stage: staging
+    displayName: Staging
+
+    variables:
+      - group: stage-staging
+
+    jobs:
+      - ${{ each option in parameters.options }}:
+        - job: test_${{ join('_', option.sample) }}
+          displayName: Test ${{ join('-', option.sample) }}
+
+          pool:
+            vmImage: ubuntu-16.04
+
+          workspace:
+            clean: all
+
+          steps:
+            - checkout: self
+              submodules: recursive
+
+            - task: DownloadPipelineArtifact@2
+              inputs:
+                artifact: build-${{ join('-', option.sample) }}-registry
+                path: $(Build.SourcesDirectory)/.registry/
+              displayName: Artifacts Registry Download
+
+            - script: |
+                dotnet --info
+
+                echo "##vso[task.setvariable variable=PATH;]$PATH:~/.dotnet/tools"
+                dotnet tool install Cake.Tool --global --version 0.33.0
+
+                dotnet tool list --global
+              displayName: .NET Init
+
+            - task: Docker@2
+              inputs:
+                command: login
+                containerRegistry: github-gusztavvargadr
+              displayName: Docker Login
+
+            - script: |
+                dotnet cake deploy.cake --target=test --configuration=${{ join('-', option.sample) }}
+              displayName: Cake Test
+              env:
+                DOCKER_REGISTRY_PUBLISH: $(docker-registry-publish)
                 PACKET_AUTH_TOKEN: $(packet-auth-token)
 
             - script: |

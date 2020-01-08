@@ -46,19 +46,10 @@ Task("Package")
 Task("Publish")
   .IsDependentOn("Package")
   .Does(() => {
-    {
-      var settings = new DockerImagePushSettings {
-      };
-      var imageReference = GetDockerImageReference();
-      DockerPush(settings, imageReference);
-    }
-
-    {
-      var settings = new DockerImageRemoveSettings {
-      };
-      var images = new [] { GetDockerImageReference() };
-      DockerRemove(settings, images);
-    }
+    var settings = new DockerImagePushSettings {
+    };
+    var imageReference = GetDockerImageReference();
+    DockerPush(settings, imageReference);
   });
 
 RunTarget(target);
