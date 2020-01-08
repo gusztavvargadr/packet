@@ -86,8 +86,8 @@ stages:
               displayName: .NET Init
 
             - script: |
-                dotnet cake deploy.cake --target=test --configuration=${{ join('-', option.sample) }}
-              displayName: Cake Test
+                dotnet cake deploy.cake --target=publish --configuration=${{ join('-', option.sample) }}
+              displayName: Cake Publish
               env:
                 DOCKER_REGISTRY_PUBLISH: $(docker-registry-publish)
                 PACKET_AUTH_TOKEN: $(packet-auth-token)
@@ -140,8 +140,8 @@ stages:
               displayName: Docker Login
 
             - script: |
-                dotnet cake deploy.cake --target=test --configuration=${{ join('-', option.sample) }}
-              displayName: Cake Test
+                dotnet cake deploy.cake --target=publish --configuration=${{ join('-', option.sample) }}
+              displayName: Cake Publish
               env:
                 DOCKER_REGISTRY_PUBLISH: $(docker-registry-publish)
                 PACKET_AUTH_TOKEN: $(packet-auth-token)
@@ -149,4 +149,11 @@ stages:
             - script: |
                 dotnet cake deploy.cake --target=clean --configuration=${{ join('-', option.sample) }}
               displayName: Cake Clean
+              condition: always()
+
+            - task: Docker@2
+              inputs:
+                command: logout
+                containerRegistry: github-gusztavvargadr
+              displayName: Docker Logout
               condition: always()
