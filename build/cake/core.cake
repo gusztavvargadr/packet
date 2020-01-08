@@ -1,31 +1,32 @@
 #addin nuget:?package=Cake.Docker&version=0.11.0
 
 var defaulTarget = "Publish";
-var defaultConfiguration = "device-linux";
 
 var defaultDockerRegistry = "localhost:5000/";
-var defaultDockerImageTag = "latest";
-var defaultConsulHttpAddr = "consul:8500";
+var defaultSampleName = "device-linux";
+var defaultSampleVersion = "latest";
 
 var target = Argument("target", defaulTarget);
-var configuration = Argument("configuration", defaultConfiguration);
 
-var consulHttpAddr = Argument("consul-http-addr", EnvironmentVariable("CONSUL_HTTP_ADDR", defaultConsulHttpAddr));
-var dockerRegistry = Argument("docker-registry", EnvironmentVariable("DOCKER_REGISTRY", defaultDockerRegistry));
-var dockerImageTag = Argument("docker-image-tag", EnvironmentVariable("DOCKER_IMAGE_TAG", defaultDockerImageTag));
+var dockerRegistry = EnvironmentVariable("DOCKER_REGISTRY", defaultDockerRegistry);
+var sampleName = EnvironmentVariable("SAMPLE_NAME", defaultSampleName);
+var sampleVersion = EnvironmentVariable("SAMPLE_VERSION", defaultSampleVersion);
 
-private string GetDockerImageReference() => $"{dockerRegistry}sample-{configuration}:{dockerImageTag}";
+var consulHttpAddr = EnvironmentVariable("CONSUL_HTTP_ADDR");
+
+private string GetDockerImageReference() => $"{dockerRegistry}sample-{sampleName}:{sampleVersion}";
 
 Task("Init")
   .Does(() => {
     StartProcess("docker", "version");
     StartProcess("docker-compose", "version");
 
-    {
-      var settings = new DockerComposeBuildSettings {
+    if (string.IsNullOrEmpty(consulHttpAddr)) {
+      var settings = new DockerComposeUpSettings {
+        DetachedMode = true
       };
-      var services = new [] { "gitversion" };
-      DockerComposeBuild(settings, services);
+      var services = new [] { "consul" };
+      DockerComposeUp(settings, services);
     }
 
     if (dockerRegistry == defaultDockerRegistry) {
@@ -35,26 +36,12 @@ Task("Init")
       var services = new [] { "registry" };
       DockerComposeUp(settings, services);
     }
-
-    Environment.SetEnvironmentVariable("DOCKER_REGISTRY", dockerRegistry);
-
-    if (consulHttpAddr == defaultConsulHttpAddr) {
-      var settings = new DockerComposeUpSettings {
-        DetachedMode = true
-      };
-      var services = new [] { "consul" };
-      DockerComposeUp(settings, services);
-    }
-
-    Environment.SetEnvironmentVariable("CONSUL_HTTP_ADDR", consulHttpAddr);
-
-    Environment.SetEnvironmentVariable("SAMPLE_NAME", configuration);
   });
 
 Task("Version")
   .IsDependentOn("Init")
   .Does((context) => {
-    if (dockerImageTag == defaultDockerImageTag) {
+    if (sampleVersion == defaultSampleVersion) {
       var upSettings = new DockerComposeUpSettings {
       };
       var upServices = new [] { "gitversion" };
@@ -72,10 +59,9 @@ Task("Version")
       var logsService = "gitversion";
       var logsOutput = logsRunner.RunWithResult("logs", logsSettings, (items) => items.ToArray(), logsService).Last();
 
-      dockerImageTag = logsOutput.Split('|')[1].Trim();
+      sampleVersion = logsOutput.Split('|')[1].Trim();
+      Environment.SetEnvironmentVariable("SAMPLE_VERSION", sampleVersion);
     }
-
-    Environment.SetEnvironmentVariable("DOCKER_IMAGE_TAG", dockerImageTag);
   });
 
 Task("Clean")

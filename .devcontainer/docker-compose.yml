@@ -15,9 +15,12 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 
     environment:
+      DOCKER_REGISTRY:
+      SAMPLE_NAME:
+      SAMPLE_VERSION:
+
       REPO_DIR:
       CONSUL_HTTP_ADDR:
       PACKET_AUTH_TOKEN:
-      DOCKER_REGISTRY:
 
     command: sleep infinity

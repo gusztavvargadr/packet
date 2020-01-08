@@ -1,6 +1,6 @@
 #load ./build/cake/core.cake
 
-var dockerRegistryPublish = Argument("docker-registry-publish", EnvironmentVariable("DOCKER_REGISTRY_PUBLISH", defaultDockerRegistry));
+var dockerRegistryPublish = EnvironmentVariable("DOCKER_REGISTRY_PUBLISH");
 
 Task("Restore")
   .IsDependentOn("Version")
@@ -10,10 +10,12 @@ Task("Restore")
     var imageReference = GetDockerImageReference();
     DockerPull(settings, imageReference);
 
-    dockerRegistry = dockerRegistryPublish;
-    Environment.SetEnvironmentVariable("DOCKER_REGISTRY", dockerRegistry);
-    var registryReference = GetDockerImageReference();
-    DockerTag(imageReference, registryReference);
+    if (!string.IsNullOrEmpty(dockerRegistryPublish)) {
+      dockerRegistry = dockerRegistryPublish;
+      Environment.SetEnvironmentVariable("DOCKER_REGISTRY", dockerRegistry);
+      var registryReference = GetDockerImageReference();
+      DockerTag(imageReference, registryReference);
+    }
   });
 
 Task("Build")

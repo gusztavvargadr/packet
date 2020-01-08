@@ -1,51 +1,8 @@
 version: '3'
 
 services:
-  gitversion:
-    build:
-      context: ./build/docker/
-      dockerfile: ./gitversion.Dockerfile
-
-    volumes:
-      - ${REPO_DIR}/:/work/
-
-  registry:
-    build:
-      context: ./build/docker/
-      dockerfile: ./registry.Dockerfile
-
-    volumes:
-      - ${REPO_DIR}/.registry/data/:/var/lib/registry/
-
-    ports:
-      - 5000:5000
-
-  consul:
-    build:
-      context: ./build/docker/
-      dockerfile: ./consul.Dockerfile
-
-    volumes:
-      - ${REPO_DIR}/.consul/data/:/consul/data/
-
-    ports:
-      - 8500:8500
-
-  terraform:
-    build:
-      context: ./build/docker/
-      dockerfile: ./terraform.Dockerfile
-
-    volumes:
-      - ~/.terraform.d/:/root/.terraform.d/
-
-    environment:
-      TF_CLI_CONFIG_FILE: /root/.terraform.d/.terraformrc
-      CONSUL_HTTP_ADDR:
-      PACKET_AUTH_TOKEN:
-
   sample:
-    image: ${DOCKER_REGISTRY}sample-${SAMPLE_NAME}:${DOCKER_IMAGE_TAG}
+    image: ${DOCKER_REGISTRY}sample-${SAMPLE_NAME}:${SAMPLE_VERSION}
     build:
       context: ./
       dockerfile: ./build/docker/sample.Dockerfile
@@ -58,3 +15,33 @@ services:
     environment:
       CONSUL_HTTP_ADDR:
       PACKET_AUTH_TOKEN:
+
+  consul:
+    build:
+      context: ./build/docker/
+      dockerfile: ./consul.Dockerfile
+
+    volumes:
+      - ${REPO_DIR}/.consul/data/:/consul/data/
+
+    ports:
+      - 8500:8500
+
+  registry:
+    build:
+      context: ./build/docker/
+      dockerfile: ./registry.Dockerfile
+
+    volumes:
+      - ${REPO_DIR}/.registry/data/:/var/lib/registry/
+
+    ports:
+      - 5000:5000
+
+  gitversion:
+    build:
+      context: ./build/docker/
+      dockerfile: ./gitversion.Dockerfile
+
+    volumes:
+      - ${REPO_DIR}/:/work/

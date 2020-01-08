@@ -31,11 +31,17 @@ stages:
               displayName: .NET Init
 
             - script: |
-                dotnet cake build.cake --target=publish --configuration=${{ join('-', option.sample) }}
+                dotnet cake build.cake --target=publish
+              env:
+                SAMPLE_NAME: ${{ join('-', option.sample) }}
+                PACKET_AUTH_TOKEN: $(packet-auth-token)
               displayName: Cake Publish
 
             - script: |
-                dotnet cake build.cake --target=clean --configuration=${{ join('-', option.sample) }}
+                dotnet cake build.cake --target=clean
+              env:
+                SAMPLE_NAME: ${{ join('-', option.sample) }}
+                PACKET_AUTH_TOKEN: $(packet-auth-token)
               displayName: Cake Clean
               condition: always()
 
@@ -86,14 +92,19 @@ stages:
               displayName: .NET Init
 
             - script: |
-                dotnet cake deploy.cake --target=publish --configuration=${{ join('-', option.sample) }}
-              displayName: Cake Publish
+                dotnet cake deploy.cake --target=publish
               env:
-                DOCKER_REGISTRY_PUBLISH: $(docker-registry-publish)
+                SAMPLE_NAME: ${{ join('-', option.sample) }}
                 PACKET_AUTH_TOKEN: $(packet-auth-token)
+                DOCKER_REGISTRY_PUBLISH: $(docker-registry-publish)
+              displayName: Cake Publish
 
             - script: |
-                dotnet cake deploy.cake --target=clean --configuration=${{ join('-', option.sample) }}
+                dotnet cake deploy.cake --target=clean
+              env:
+                SAMPLE_NAME: ${{ join('-', option.sample) }}
+                PACKET_AUTH_TOKEN: $(packet-auth-token)
+                DOCKER_REGISTRY_PUBLISH: $(docker-registry-publish)
               displayName: Cake Clean
               condition: always()
 
@@ -140,14 +151,19 @@ stages:
               displayName: Docker Login
 
             - script: |
-                dotnet cake deploy.cake --target=publish --configuration=${{ join('-', option.sample) }}
+                dotnet cake deploy.cake --target=publish
               displayName: Cake Publish
               env:
-                DOCKER_REGISTRY_PUBLISH: $(docker-registry-publish)
+                SAMPLE_NAME: ${{ join('-', option.sample) }}
                 PACKET_AUTH_TOKEN: $(packet-auth-token)
+                DOCKER_REGISTRY_PUBLISH: $(docker-registry-publish)
 
             - script: |
-                dotnet cake deploy.cake --target=clean --configuration=${{ join('-', option.sample) }}
+                dotnet cake deploy.cake --target=clean
+              env:
+                SAMPLE_NAME: ${{ join('-', option.sample) }}
+                PACKET_AUTH_TOKEN: $(packet-auth-token)
+                DOCKER_REGISTRY_PUBLISH: $(docker-registry-publish)
               displayName: Cake Clean
               condition: always()
 
