@@ -16,8 +16,8 @@ services:
 
     environment:
       REPO_DIR:
-      DOCKER_REGISTRY:
       CONSUL_HTTP_ADDR:
       PACKET_AUTH_TOKEN:
+      DOCKER_REGISTRY:
 
     command: sleep infinity

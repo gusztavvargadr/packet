@@ -9,17 +9,6 @@ services:
     volumes:
       - ${REPO_DIR}/:/work/
 
-  consul:
-    build:
-      context: ./build/docker/
-      dockerfile: ./consul.Dockerfile
-
-    volumes:
-      - ${REPO_DIR}/.consul/data/:/consul/data/
-
-    ports:
-      - 8500:8500
-
   registry:
     build:
       context: ./build/docker/
@@ -30,6 +19,17 @@ services:
 
     ports:
       - 5000:5000
+
+  consul:
+    build:
+      context: ./build/docker/
+      dockerfile: ./consul.Dockerfile
+
+    volumes:
+      - ${REPO_DIR}/.consul/data/:/consul/data/
+
+    ports:
+      - 8500:8500
 
   terraform:
     build:

@@ -2,12 +2,14 @@
 
 var defaulTarget = "Publish";
 var defaultConfiguration = "device-linux";
+
 var defaultDockerRegistry = "localhost:5000/";
 var defaultDockerImageTag = "latest";
 var defaultConsulHttpAddr = "consul:8500";
 
 var target = Argument("target", defaulTarget);
 var configuration = Argument("configuration", defaultConfiguration);
+
 var consulHttpAddr = Argument("consul-http-addr", EnvironmentVariable("CONSUL_HTTP_ADDR", defaultConsulHttpAddr));
 var dockerRegistry = Argument("docker-registry", EnvironmentVariable("DOCKER_REGISTRY", defaultDockerRegistry));
 var dockerImageTag = Argument("docker-image-tag", EnvironmentVariable("DOCKER_IMAGE_TAG", defaultDockerImageTag));
@@ -26,16 +28,6 @@ Task("Init")
       DockerComposeBuild(settings, services);
     }
 
-    if (consulHttpAddr == defaultConsulHttpAddr) {
-      var settings = new DockerComposeUpSettings {
-        DetachedMode = true
-      };
-      var services = new [] { "consul" };
-      DockerComposeUp(settings, services);
-    }
-
-    Environment.SetEnvironmentVariable("CONSUL_HTTP_ADDR", consulHttpAddr);
-
     if (dockerRegistry == defaultDockerRegistry) {
       var settings = new DockerComposeUpSettings {
         DetachedMode = true
@@ -45,6 +37,16 @@ Task("Init")
     }
 
     Environment.SetEnvironmentVariable("DOCKER_REGISTRY", dockerRegistry);
+
+    if (consulHttpAddr == defaultConsulHttpAddr) {
+      var settings = new DockerComposeUpSettings {
+        DetachedMode = true
+      };
+      var services = new [] { "consul" };
+      DockerComposeUp(settings, services);
+    }
+
+    Environment.SetEnvironmentVariable("CONSUL_HTTP_ADDR", consulHttpAddr);
 
     Environment.SetEnvironmentVariable("SAMPLE_NAME", configuration);
   });
