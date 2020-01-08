@@ -1,5 +1,5 @@
 variable "deployment_name" {
-  default = "device-default"
+  default = "gusztavvargadr-packet-device-default"
 }
 
 variable "project_name" {

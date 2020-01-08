@@ -8,9 +8,9 @@ var defaultConsulHttpAddr = "consul:8500";
 
 var target = Argument("target", defaulTarget);
 var configuration = Argument("configuration", defaultConfiguration);
+var consulHttpAddr = Argument("consul-http-addr", EnvironmentVariable("CONSUL_HTTP_ADDR", defaultConsulHttpAddr));
 var dockerRegistry = Argument("docker-registry", EnvironmentVariable("DOCKER_REGISTRY", defaultDockerRegistry));
 var dockerImageTag = Argument("docker-image-tag", EnvironmentVariable("DOCKER_IMAGE_TAG", defaultDockerImageTag));
-var consulHttpAddr = Argument("consul-http-addr", EnvironmentVariable("CONSUL_HTTP_ADDR", defaultConsulHttpAddr));
 
 private string GetDockerImageReference() => $"{dockerRegistry}sample-{configuration}:{dockerImageTag}";
 
@@ -34,6 +34,8 @@ Task("Init")
       DockerComposeUp(settings, services);
     }
 
+    Environment.SetEnvironmentVariable("CONSUL_HTTP_ADDR", consulHttpAddr);
+
     if (dockerRegistry == defaultDockerRegistry) {
       var settings = new DockerComposeUpSettings {
         DetachedMode = true
@@ -42,30 +44,35 @@ Task("Init")
       DockerComposeUp(settings, services);
     }
 
+    Environment.SetEnvironmentVariable("DOCKER_REGISTRY", dockerRegistry);
+
     Environment.SetEnvironmentVariable("SAMPLE_NAME", configuration);
   });
 
 Task("Version")
   .IsDependentOn("Init")
   .Does((context) => {
-    var upSettings = new DockerComposeUpSettings {
-    };
-    var upServices = new [] { "gitversion" };
-    DockerComposeUp(upSettings, upServices);
+    if (dockerImageTag == defaultDockerImageTag) {
+      var upSettings = new DockerComposeUpSettings {
+      };
+      var upServices = new [] { "gitversion" };
+      DockerComposeUp(upSettings, upServices);
 
-    var logsRunner = new GenericDockerComposeRunner<DockerComposeLogsSettings>(
-      context.FileSystem,
-      context.Environment,
-      context.ProcessRunner,
-      context.Tools
-    );
-    var logsSettings = new DockerComposeLogsSettings {
-      NoColor = true
-    };
-    var logsService = "gitversion";
-    var logsOutput = logsRunner.RunWithResult("logs", logsSettings, (items) => items.ToArray(), logsService).Last();
+      var logsRunner = new GenericDockerComposeRunner<DockerComposeLogsSettings>(
+        context.FileSystem,
+        context.Environment,
+        context.ProcessRunner,
+        context.Tools
+      );
+      var logsSettings = new DockerComposeLogsSettings {
+        NoColor = true
+      };
+      var logsService = "gitversion";
+      var logsOutput = logsRunner.RunWithResult("logs", logsSettings, (items) => items.ToArray(), logsService).Last();
 
-    dockerImageTag = logsOutput.Split('|')[1].Trim();
+      dockerImageTag = logsOutput.Split('|')[1].Trim();
+    }
+
     Environment.SetEnvironmentVariable("DOCKER_IMAGE_TAG", dockerImageTag);
   });
 

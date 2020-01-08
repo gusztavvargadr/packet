@@ -1,5 +1,5 @@
 {
-	"name": "packet",
+	"name": "gusztavvargadr-packet",
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "vscode",
 	"workspaceFolder": "/workspace",

@@ -1,4 +1,4 @@
 tools/
-**/.registry/
 **/.consul/
+**/.registry/
 **/.terraform/
