@@ -73,4 +73,4 @@ stages:
                   command: logout
                   containerRegistry: ${{ option.containerRegistry }}
                 displayName: Docker Logout
-                condition: and(ne(variables['docker-registry-publish'], ''))
+                condition: ne(variables['docker-registry-publish'], '')
