@@ -22,3 +22,8 @@ stages:
           displayName: Staging
           containerRegistry: github-gusztavvargadr
           samples: ${{ parameters.samples }}
+
+        - name: production
+          displayName: Production
+          containerRegistry: dockerhub-gusztavvargadr
+          samples: ${{ parameters.samples }}
