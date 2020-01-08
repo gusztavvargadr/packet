@@ -55,121 +55,20 @@ stages:
               displayName: Artifacts Registry Publish
               condition: always()
 
-  - stage: acceptance
-    displayName: Acceptance
+  - template: ./sample.azure-pipelines.deploy.yml
+    parameters:
+      options:
+        - ${{ each option in parameters.options }}:
+          - name: acceptance
+            displayName: Acceptance
+            containerRegistry: github-gusztavvargadr
+            sample: option.sample
 
-    variables:
-      - group: stage-acceptance
-
-    jobs:
-      - ${{ each option in parameters.options }}:
-        - job: test_${{ join('_', option.sample) }}
-          displayName: Test ${{ join('-', option.sample) }}
-
-          pool:
-            vmImage: ubuntu-16.04
-
-          workspace:
-            clean: all
-
-          steps:
-            - checkout: self
-              submodules: recursive
-
-            - task: DownloadPipelineArtifact@2
-              inputs:
-                artifact: build-${{ join('-', option.sample) }}-registry
-                path: $(Build.SourcesDirectory)/.registry/
-              displayName: Artifacts Registry Download
-
-            - script: |
-                dotnet --info
-
-                echo "##vso[task.setvariable variable=PATH;]$PATH:~/.dotnet/tools"
-                dotnet tool install Cake.Tool --global --version 0.33.0
-
-                dotnet tool list --global
-              displayName: .NET Init
-
-            - script: |
-                dotnet cake deploy.cake --target=publish
-              env:
-                SAMPLE_NAME: ${{ join('-', option.sample) }}
-                PACKET_AUTH_TOKEN: $(packet-auth-token)
-                DOCKER_REGISTRY_PUBLISH: $(docker-registry-publish)
-              displayName: Cake Publish
-
-            - script: |
-                dotnet cake deploy.cake --target=clean
-              env:
-                SAMPLE_NAME: ${{ join('-', option.sample) }}
-                PACKET_AUTH_TOKEN: $(packet-auth-token)
-                DOCKER_REGISTRY_PUBLISH: $(docker-registry-publish)
-              displayName: Cake Clean
-              condition: always()
-
-  - stage: staging
-    displayName: Staging
-
-    variables:
-      - group: stage-staging
-
-    jobs:
-      - ${{ each option in parameters.options }}:
-        - job: test_${{ join('_', option.sample) }}
-          displayName: Test ${{ join('-', option.sample) }}
-
-          pool:
-            vmImage: ubuntu-16.04
-
-          workspace:
-            clean: all
-
-          steps:
-            - checkout: self
-              submodules: recursive
-
-            - task: DownloadPipelineArtifact@2
-              inputs:
-                artifact: build-${{ join('-', option.sample) }}-registry
-                path: $(Build.SourcesDirectory)/.registry/
-              displayName: Artifacts Registry Download
-
-            - script: |
-                dotnet --info
-
-                echo "##vso[task.setvariable variable=PATH;]$PATH:~/.dotnet/tools"
-                dotnet tool install Cake.Tool --global --version 0.33.0
-
-                dotnet tool list --global
-              displayName: .NET Init
-
-            - task: Docker@2
-              inputs:
-                command: login
-                containerRegistry: github-gusztavvargadr
-              displayName: Docker Login
-
-            - script: |
-                dotnet cake deploy.cake --target=publish
-              displayName: Cake Publish
-              env:
-                SAMPLE_NAME: ${{ join('-', option.sample) }}
-                PACKET_AUTH_TOKEN: $(packet-auth-token)
-                DOCKER_REGISTRY_PUBLISH: $(docker-registry-publish)
-
-            - script: |
-                dotnet cake deploy.cake --target=clean
-              env:
-                SAMPLE_NAME: ${{ join('-', option.sample) }}
-                PACKET_AUTH_TOKEN: $(packet-auth-token)
-                DOCKER_REGISTRY_PUBLISH: $(docker-registry-publish)
-              displayName: Cake Clean
-              condition: always()
-
-            - task: Docker@2
-              inputs:
-                command: logout
-                containerRegistry: github-gusztavvargadr
-              displayName: Docker Logout
-              condition: always()
+  - template: ./sample.azure-pipelines.deploy.yml
+    parameters:
+      options:
+        - ${{ each option in parameters.options }}:
+          - name: staging
+            displayName: Staging
+            containerRegistry: github-gusztavvargadr
+            sample: option.sample
