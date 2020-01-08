@@ -1,0 +1,24 @@
+parameters:
+  samples: []
+    # - name: [ sample-name-part-1, sample-name-part-2, ... ]
+
+stages:
+  - template: ./sample.azure-pipelines.build.yml
+    parameters:
+      stages:
+        - name: commit
+          displayName: Commit
+          samples: ${{ parameters.samples }}
+
+  - template: ./sample.azure-pipelines.deploy.yml
+    parameters:
+      stages:
+        - name: acceptance
+          displayName: Acceptance
+          containerRegistry: github-gusztavvargadr
+          samples: ${{ parameters.samples }}
+
+        - name: staging
+          displayName: Staging
+          containerRegistry: github-gusztavvargadr
+          samples: ${{ parameters.samples }}

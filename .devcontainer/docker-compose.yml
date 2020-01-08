@@ -7,16 +7,20 @@ version: '3'
 services:
   vscode:
     build:
-      context: .
-      dockerfile: vscode.Dockerfile
+      context: ./
+      dockerfile: ./vscode.Dockerfile
 
     volumes:
-      - ..:/workspace:cached
+      - ../:/workspace/:cached
       - /var/run/docker.sock:/var/run/docker.sock
-      - ~/.terraform.d:/root/.terraform.d
 
     environment:
-      TF_CLI_CONFIG_FILE: /root/.terraform.d/.terraformrc
+      DOCKER_REGISTRY:
+      SAMPLE_NAME:
+      SAMPLE_VERSION:
+
+      REPO_DIR:
+      CONSUL_HTTP_ADDR:
       PACKET_AUTH_TOKEN:
 
     command: sleep infinity

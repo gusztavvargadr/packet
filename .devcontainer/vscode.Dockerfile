@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See https://go.microsoft.com/fwlink/?linkid=2090316 for license information.
 #-------------------------------------------------------------------------------------------------------------
 
-FROM library/ubuntu:16.04
+FROM mcr.microsoft.com/dotnet/core/sdk:2.1
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -36,9 +36,15 @@ RUN apt-get update \
 ENV DEBIAN_FRONTEND=dialog
 
 RUN curl -sSL https://releases.hashicorp.com/terraform/0.12.18/terraform_0.12.18_linux_amd64.zip -o /tmp/terraform.zip \
-  && unzip -qq /tmp/terraform.zip -d /usr/local/bin \
+  && unzip -qq /tmp/terraform.zip -d /usr/local/bin/ \
   && rm /tmp/terraform.zip
 
+ADD ./vscode.terraform.hcl /root/.terraform.d/.terraformrc
+ENV TF_CLI_CONFIG_FILE /root/.terraform.d/.terraformrc
+
 RUN curl -sSL https://github.com/terraform-linters/tflint/releases/download/v0.13.2/tflint_linux_amd64.zip -o /tmp/tflint.zip \
-  && unzip -qq /tmp/tflint.zip -d /usr/local/bin \
+  && unzip -qq /tmp/tflint.zip -d /usr/local/bin/ \
   && rm /tmp/tflint.zip
+
+ENV PATH $PATH:/root/.dotnet/tools
+RUN dotnet tool install Cake.Tool --global --version 0.33.0
