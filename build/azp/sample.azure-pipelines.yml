@@ -62,13 +62,13 @@ stages:
           displayName: Acceptance
           containerRegistry: github-gusztavvargadr
           samples:
-          - ${{ each option in parameters.options }}:
-            - sample: ${{ option.sample }}
+            - ${{ each option in parameters.options }}:
+              - name: ${{ option.sample }}
 
         - name: staging
           displayName: Staging
           containerRegistry: github-gusztavvargadr
           samples:
             - ${{ each option in parameters.options }}:
-              - sample: ${{ option.sample }}
+              - name: ${{ option.sample }}
   
