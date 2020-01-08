@@ -6,6 +6,6 @@ variables:
 stages:
   - template: ./build/azp/sample.azure-pipelines.yml
     parameters:
-      options:
-        - sample: [ 'device', 'linux' ]
-        - sample: [ 'device', 'windows' ]
+      samples:
+        - name: [ 'device', 'linux' ]
+        - name: [ 'device', 'windows' ]
