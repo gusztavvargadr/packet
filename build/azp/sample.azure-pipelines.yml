@@ -1,15 +1,15 @@
 parameters:
-  options: []
-    # - sample: [ sample-name-part-1, sample-name-part-2, ... ]
+  samples: []
+    # - name: [ sample-name-part-1, sample-name-part-2, ... ]
 
 stages:
   - stage: commit
     displayName: Commit
 
     jobs:
-      - ${{ each option in parameters.options }}:
-        - job: build_${{ join('_', option.sample) }}
-          displayName: Build ${{ join('-', option.sample) }}
+      - ${{ each sample in parameters.samples }}:
+        - job: build_${{ join('_', sample.name) }}
+          displayName: Build ${{ join('-', sample.name) }}
 
           pool:
             vmImage: ubuntu-16.04
@@ -33,14 +33,14 @@ stages:
             - script: |
                 dotnet cake build.cake --target=publish
               env:
-                SAMPLE_NAME: ${{ join('-', option.sample) }}
+                SAMPLE_NAME: ${{ join('-', sample.name) }}
                 PACKET_AUTH_TOKEN: $(packet-auth-token)
               displayName: Cake Publish
 
             - script: |
                 dotnet cake build.cake --target=clean
               env:
-                SAMPLE_NAME: ${{ join('-', option.sample) }}
+                SAMPLE_NAME: ${{ join('-', sample.name) }}
                 PACKET_AUTH_TOKEN: $(packet-auth-token)
               displayName: Cake Clean
               condition: always()
@@ -51,24 +51,19 @@ stages:
               condition: always()
 
             - publish: $(Build.SourcesDirectory)/.registry/
-              artifact: build-${{ join('-', option.sample) }}-registry
+              artifact: build-${{ join('-', sample.name) }}-registry
               displayName: Artifacts Registry Publish
               condition: always()
 
   - template: ./sample.azure-pipelines.deploy.yml
     parameters:
-      options:
+      stages:
         - name: acceptance
           displayName: Acceptance
           containerRegistry: github-gusztavvargadr
-          samples:
-            - ${{ each option in parameters.options }}:
-              - name: ${{ option.sample }}
+          samples: ${{ parameters.samples }}
 
         - name: staging
           displayName: Staging
           containerRegistry: github-gusztavvargadr
-          samples:
-            - ${{ each option in parameters.options }}:
-              - name: ${{ option.sample }}
-  
+          samples: ${{ parameters.samples }}
