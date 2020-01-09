@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 0.12.18"
+  required_version = ">= 0.12.0"
 
   backend "consul" {
     path = "gusztavvargadr-packet-sample-device-linux/.terraform/terraform.tfstate"
@@ -7,11 +7,11 @@ terraform {
 }
 
 provider "packet" {
-  version = ">= 2.7.3"
+  version = ">= 2.7.0"
 }
 
 provider "tls" {
-  version = ">= 2.1.1"
+  version = ">= 2.1.0"
 }
 
 provider "local" {
@@ -19,5 +19,5 @@ provider "local" {
 }
 
 provider "null" {
-  version = ">= 2.1.2"
+  version = ">= 2.1.0"
 }

@@ -9,6 +9,12 @@ services:
     build:
       context: ./
       dockerfile: ./vscode.Dockerfile
+      args:
+        DOTNET_VERSION: '2.1'
+        COMPOSE_VERSION: '1.25.1'
+        TERRAFORM_VERSION: ${TERRAFORM_VERSION}
+        TFLINT_VERSION: '0.13.4'
+        CAKE_VERSION: '0.35.0'
 
     volumes:
       - ../:/workspace/:cached
