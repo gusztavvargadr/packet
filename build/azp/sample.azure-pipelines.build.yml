@@ -26,6 +26,7 @@ stages:
 
             steps:
               - checkout: self
+                persistCredentials: true
                 submodules: recursive
 
               - script: |

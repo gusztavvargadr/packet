@@ -29,6 +29,7 @@ stages:
 
             steps:
               - checkout: self
+                persistCredentials: true
                 submodules: recursive
 
               - task: DownloadPipelineArtifact@2
