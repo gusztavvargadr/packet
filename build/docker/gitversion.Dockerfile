@@ -1,4 +1,4 @@
-FROM gittools/gitversion:5.1.2-linux
+FROM gittools/gitversion:5.1.3-linux
 
 WORKDIR /work
 

@@ -31,10 +31,6 @@ stages:
               - checkout: self
                 submodules: recursive
 
-              - script: |
-                  git switch -
-                displayName: Git Init
-
               - task: DownloadPipelineArtifact@2
                 inputs:
                   artifact: build-${{ join('-', sample.name) }}-registry

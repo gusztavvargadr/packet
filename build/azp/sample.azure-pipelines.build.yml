@@ -29,10 +29,6 @@ stages:
                 submodules: recursive
 
               - script: |
-                  git switch -
-                displayName: Git Init
-
-              - script: |
                   dotnet --info
 
                   echo "##vso[task.setvariable variable=PATH;]$PATH:~/.dotnet/tools"
