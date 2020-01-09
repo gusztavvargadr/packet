@@ -26,8 +26,11 @@ stages:
 
             steps:
               - checkout: self
-                persistCredentials: true
                 submodules: recursive
+
+              - script: |
+                  git switch -
+                displayName: Git Init
 
               - script: |
                   dotnet --info
