@@ -1,20 +1,16 @@
 version: '3'
 
 services:
-  sample:
-    image: ${DOCKER_REGISTRY}sample-${SAMPLE_NAME}:${SAMPLE_VERSION}
+  registry:
     build:
-      context: ./
-      dockerfile: ./build/docker/sample.Dockerfile
-      args:
-        SAMPLE_NAME: ${SAMPLE_NAME}
+      context: ./build/docker/
+      dockerfile: ./registry.Dockerfile
 
     volumes:
-      - ${REPO_DIR}/samples/${SAMPLE_NAME}/.terraform/:/opt/terraform/samples/${SAMPLE_NAME}/.terraform/
+      - ${REPO_DIR}/.registry/data/:/var/lib/registry/
 
-    environment:
-      CONSUL_HTTP_ADDR:
-      PACKET_AUTH_TOKEN:
+    ports:
+      - 5000:5000
 
   consul:
     build:
@@ -27,17 +23,6 @@ services:
     ports:
       - 8500:8500
 
-  registry:
-    build:
-      context: ./build/docker/
-      dockerfile: ./registry.Dockerfile
-
-    volumes:
-      - ${REPO_DIR}/.registry/data/:/var/lib/registry/
-
-    ports:
-      - 5000:5000
-
   gitversion:
     build:
       context: ./build/docker/
@@ -45,3 +30,19 @@ services:
 
     volumes:
       - ${REPO_DIR}/:/work/
+
+  sample:
+    image: ${DOCKER_REGISTRY}sample-${SAMPLE_NAME}:${SAMPLE_VERSION}
+    build:
+      context: ./
+      dockerfile: ./build/docker/sample.Dockerfile
+      args:
+        SAMPLE_NAME: ${SAMPLE_NAME}
+        TERRAFORM_VERSION: ${TERRAFORM_VERSION}
+
+    volumes:
+      - ${REPO_DIR}/samples/${SAMPLE_NAME}/.terraform/:/opt/terraform/samples/${SAMPLE_NAME}/.terraform/
+
+    environment:
+      CONSUL_HTTP_ADDR:
+      PACKET_AUTH_TOKEN:

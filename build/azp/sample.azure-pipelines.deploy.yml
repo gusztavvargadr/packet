@@ -41,7 +41,7 @@ stages:
                   dotnet --info
 
                   echo "##vso[task.setvariable variable=PATH;]$PATH:~/.dotnet/tools"
-                  dotnet tool install Cake.Tool --global --version 0.33.0
+                  dotnet tool install Cake.Tool --global --version 0.35.0
 
                   dotnet tool list --global
                 displayName: .NET Init

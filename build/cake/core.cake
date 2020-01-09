@@ -21,19 +21,19 @@ Task("Init")
     StartProcess("docker", "version");
     StartProcess("docker-compose", "version");
 
-    if (string.IsNullOrEmpty(consulHttpAddr)) {
-      var settings = new DockerComposeUpSettings {
-        DetachedMode = true
-      };
-      var services = new [] { "consul" };
-      DockerComposeUp(settings, services);
-    }
-
     if (dockerRegistry == defaultDockerRegistry) {
       var settings = new DockerComposeUpSettings {
         DetachedMode = true
       };
       var services = new [] { "registry" };
+      DockerComposeUp(settings, services);
+    }
+
+    if (string.IsNullOrEmpty(consulHttpAddr)) {
+      var settings = new DockerComposeUpSettings {
+        DetachedMode = true
+      };
+      var services = new [] { "consul" };
       DockerComposeUp(settings, services);
     }
   });
