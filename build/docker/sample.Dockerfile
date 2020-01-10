@@ -2,10 +2,10 @@ ARG TERRAFORM_VERSION
 
 FROM hashicorp/terraform:${TERRAFORM_VERSION}
 
+WORKDIR /opt/terraform/
+
 ADD ./build/docker/sample.terraform.hcl /root/.terraform.d/.terraformrc
 ENV TF_CLI_CONFIG_FILE /root/.terraform.d/.terraformrc
-
-WORKDIR /opt/terraform/
 
 ADD ./src/ ./src/
 

@@ -10,18 +10,17 @@ services:
       - ${REPO_DIR}/.registry/data/:/var/lib/registry/
 
     ports:
-      - 5000:5000
+      - '5000:5000'
 
   consul:
     build:
       context: ./build/docker/
       dockerfile: ./consul.Dockerfile
-
     volumes:
       - ${REPO_DIR}/.consul/data/:/consul/data/
 
     ports:
-      - 8500:8500
+      - '8500:8500'
 
   gitversion:
     build:
@@ -31,14 +30,31 @@ services:
     volumes:
       - ${REPO_DIR}/:/opt/gitversion
 
+    command: /showvariable SemVer
+
+  terraform:
+    build:
+      context: ./build/docker/
+      dockerfile: ./terraform.Dockerfile
+      args:
+        TERRAFORM_VERSION: ${TERRAFORM_VERSION}
+
+    volumes:
+      - ${REPO_DIR}/:/opt/terraform
+
+    environment:
+      CONSUL_HTTP_ADDR:
+      PACKET_AUTH_TOKEN:
+
   sample:
     image: ${DOCKER_REGISTRY}sample-${SAMPLE_NAME}:${SAMPLE_VERSION}
+
     build:
       context: ./
       dockerfile: ./build/docker/sample.Dockerfile
       args:
-        SAMPLE_NAME: ${SAMPLE_NAME}
         TERRAFORM_VERSION: ${TERRAFORM_VERSION}
+        SAMPLE_NAME: ${SAMPLE_NAME}
 
     volumes:
       - ${REPO_DIR}/samples/${SAMPLE_NAME}/.terraform/:/opt/terraform/samples/${SAMPLE_NAME}/.terraform/

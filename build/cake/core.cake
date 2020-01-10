@@ -21,6 +21,13 @@ Task("Init")
     StartProcess("docker", "version");
     StartProcess("docker-compose", "version");
 
+    {
+      var settings = new DockerComposeBuildSettings {
+      };
+      var services = new [] { "registry", "consul", "gitversion", "terraform" };
+      DockerComposeBuild(settings, services);
+    }
+
     if (dockerRegistry == defaultDockerRegistry) {
       var settings = new DockerComposeUpSettings {
         DetachedMode = true
