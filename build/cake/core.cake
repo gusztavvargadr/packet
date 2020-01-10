@@ -57,7 +57,12 @@ Task("Version")
         NoColor = true
       };
       var logsService = "gitversion";
-      var logsOutput = logsRunner.RunWithResult("logs", logsSettings, (items) => items.ToArray(), logsService).Last();
+      var logsOutput = logsRunner.RunWithResult(
+        "logs",
+        logsSettings,
+        (items) => items.Where(item => item.Contains('|')).ToArray(),
+        logsService
+      ).Last();
 
       sampleVersion = logsOutput.Split('|')[1].Trim();
       Environment.SetEnvironmentVariable("SAMPLE_VERSION", sampleVersion);

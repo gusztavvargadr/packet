@@ -29,7 +29,7 @@ services:
       dockerfile: ./gitversion.Dockerfile
 
     volumes:
-      - ${REPO_DIR}/:/work/
+      - ${REPO_DIR}/:/opt/gitversion
 
   sample:
     image: ${DOCKER_REGISTRY}sample-${SAMPLE_NAME}:${SAMPLE_VERSION}
