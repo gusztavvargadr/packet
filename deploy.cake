@@ -3,31 +3,44 @@
 var dockerRegistryPublish = EnvironmentVariable("DOCKER_REGISTRY_PUBLISH");
 
 Task("Restore")
-  .IsDependentOn("Version")
+  .IsDependentOn("RestoreCore")
   .Does(() => {
-    var settings = new DockerImagePullSettings {
-    };
     var imageReference = GetDockerImageReference();
-    DockerPull(settings, imageReference);
+
+    {
+      var settings = new DockerImagePullSettings {
+      };
+      DockerPull(settings, imageReference);
+    }
 
     if (!string.IsNullOrEmpty(dockerRegistryPublish)) {
       dockerRegistry = dockerRegistryPublish;
       Environment.SetEnvironmentVariable("DOCKER_REGISTRY", dockerRegistry);
       var registryReference = GetDockerImageReference();
       DockerTag(imageReference, registryReference);
+
+      {
+        var settings = new DockerImagePushSettings {
+        };
+        DockerPush(settings, registryReference);
+      }
+
+      {
+        var settings = new DockerImagePullSettings {
+        };
+        DockerPull(settings, registryReference);
+      }
     }
   });
 
 Task("Build")
   .IsDependentOn("Restore")
   .Does(() => {
-    {
-      var settings = new DockerComposeRunSettings {
-      };
-      var service = "sample";
-      var command = "init";
-      DockerComposeRun(settings, service, command);
-    }
+    var settings = new DockerComposeRunSettings {
+    };
+    var service = "sample";
+    var command = "init";
+    DockerComposeRun(settings, service, command);
   });
 
 Task("Test")
@@ -48,10 +61,6 @@ Task("Package")
 Task("Publish")
   .IsDependentOn("Package")
   .Does(() => {
-    var settings = new DockerImagePushSettings {
-    };
-    var imageReference = GetDockerImageReference();
-    DockerPush(settings, imageReference);
   });
 
 RunTarget(target);

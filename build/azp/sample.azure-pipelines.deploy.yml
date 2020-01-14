@@ -31,12 +31,6 @@ stages:
               - checkout: self
                 submodules: recursive
 
-              - task: DownloadPipelineArtifact@2
-                inputs:
-                  artifact: build-${{ join('-', sample.name) }}-registry
-                  path: $(Build.SourcesDirectory)/.registry/
-                displayName: Artifacts Registry Download
-
               - script: |
                   dotnet --info
 
@@ -45,6 +39,12 @@ stages:
 
                   dotnet tool list --global
                 displayName: .NET Init
+
+              - task: DownloadPipelineArtifact@2
+                inputs:
+                  artifact: build-${{ join('-', sample.name) }}-registry
+                  path: $(Build.SourcesDirectory)/.registry/
+                displayName: Artifacts Registry Download
 
               - task: Docker@2
                 inputs:

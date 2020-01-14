@@ -1,8 +1,12 @@
 #load ./build/cake/core.cake
 
 Task("Restore")
-  .IsDependentOn("Version")
+  .IsDependentOn("RestoreCore")
   .Does(() => {
+    var settings = new DockerComposeBuildSettings {
+    };
+    var services = new [] { "terraform" };
+    DockerComposeBuild(settings, services);
   });
 
 Task("Build")

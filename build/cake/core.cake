@@ -2,17 +2,19 @@
 
 var defaulTarget = "Publish";
 
+var target = Argument("target", defaulTarget);
+
+var defaultConsulHttpAddr = "consul:8500";
+
 var defaultDockerRegistry = "localhost:5000/";
 var defaultSampleName = "device-linux";
 var defaultSampleVersion = "latest";
 
-var target = Argument("target", defaulTarget);
+var consulHttpAddr = EnvironmentVariable("CONSUL_HTTP_ADDR", defaultConsulHttpAddr);
 
 var dockerRegistry = EnvironmentVariable("DOCKER_REGISTRY", defaultDockerRegistry);
 var sampleName = EnvironmentVariable("SAMPLE_NAME", defaultSampleName);
 var sampleVersion = EnvironmentVariable("SAMPLE_VERSION", defaultSampleVersion);
-
-var consulHttpAddr = EnvironmentVariable("CONSUL_HTTP_ADDR");
 
 private string GetDockerImageReference() => $"{dockerRegistry}sample-{sampleName}:{sampleVersion}";
 
@@ -21,28 +23,10 @@ Task("Init")
     StartProcess("docker", "version");
     StartProcess("docker-compose", "version");
 
-    {
-      var settings = new DockerComposeBuildSettings {
-      };
-      var services = new [] { "registry", "consul", "gitversion", "terraform" };
-      DockerComposeBuild(settings, services);
-    }
-
-    if (dockerRegistry == defaultDockerRegistry) {
-      var settings = new DockerComposeUpSettings {
-        DetachedMode = true
-      };
-      var services = new [] { "registry" };
-      DockerComposeUp(settings, services);
-    }
-
-    if (string.IsNullOrEmpty(consulHttpAddr)) {
-      var settings = new DockerComposeUpSettings {
-        DetachedMode = true
-      };
-      var services = new [] { "consul" };
-      DockerComposeUp(settings, services);
-    }
+    var settings = new DockerComposeBuildSettings {
+    };
+    var services = new [] { "gitversion" };
+    DockerComposeBuild(settings, services);
   });
 
 Task("Version")
@@ -73,6 +57,34 @@ Task("Version")
 
       sampleVersion = logsOutput.Split('|')[1].Trim();
       Environment.SetEnvironmentVariable("SAMPLE_VERSION", sampleVersion);
+    }
+    Information($"Sample version: '{sampleVersion}'.");
+  });
+
+Task("RestoreCore")
+  .IsDependentOn("Version")
+  .Does(() => {
+    {
+      var settings = new DockerComposeBuildSettings {
+      };
+      var services = new [] { "registry", "consul" };
+      DockerComposeBuild(settings, services);
+    }
+
+    if (dockerRegistry == defaultDockerRegistry) {
+      var settings = new DockerComposeUpSettings {
+        DetachedMode = true
+      };
+      var services = new [] { "registry" };
+      DockerComposeUp(settings, services);
+    }
+
+    if (consulHttpAddr == defaultConsulHttpAddr) {
+      var settings = new DockerComposeUpSettings {
+        DetachedMode = true
+      };
+      var services = new [] { "consul" };
+      DockerComposeUp(settings, services);
     }
   });
 
