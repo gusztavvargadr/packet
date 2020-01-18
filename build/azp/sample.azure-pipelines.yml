@@ -16,7 +16,6 @@ stages:
         - name: acceptance
           displayName: Acceptance
           samples: ${{ parameters.samples }}
-          packageRegistry: github-gusztavvargadr
           condition: succeeded()
 
         - name: staging

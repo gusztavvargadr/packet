@@ -46,12 +46,12 @@ stages:
                   path: $(Build.SourcesDirectory)/artifacts/registry/
                 displayName: Download Registry Artifacts
 
-              - task: Docker@2
-                inputs:
-                  command: login
-                  containerRegistry: ${{ stage.packageRegistry }}
-                displayName: Login Docker
-                condition: and(succeeded(), ne(variables['package-registry'], ''))
+              - ${{ if stage.packageRegistry }}:
+                - task: Docker@2
+                  inputs:
+                    command: login
+                    containerRegistry: ${{ stage.packageRegistry }}
+                  displayName: Login Docker
 
               - script: |
                   dotnet cake deploy.cake --target=publish --sample-name=${{ join('-', sample.name) }} --package-registry=$(package-registry)
@@ -66,9 +66,10 @@ stages:
                 displayName: Clean Cake
                 condition: always()
 
-              - task: Docker@2
-                inputs:
-                  command: logout
-                  containerRegistry: ${{ stage.packageRegistry }}
-                displayName: Logout Docker
-                condition: ne(variables['package-registry'], '')
+              - ${{ if stage.packageRegistry }}:
+                - task: Docker@2
+                  inputs:
+                    command: logout
+                    containerRegistry: ${{ stage.packageRegistry }}
+                  displayName: Logout Docker
+                  condition: always()

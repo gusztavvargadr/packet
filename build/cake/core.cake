@@ -13,8 +13,14 @@ var buildVersion = Argument("build-version", string.Empty);
 var projectVersion = Argument("project-version", string.Empty);
 var packageVersion = Argument("package-version", string.Empty);
 
-var sourceRegistry = Argument("source-registry", dockerRegistry);
-var packageRegistry = Argument("package-registry", dockerRegistry);
+var sourceRegistry = Argument("source-registry");
+if (string.IsNullOrEmpty(sourceRegistry)) {
+  sourceRegistry = dockerRegistry;
+}
+var packageRegistry = Argument("package-registry");
+if (string.IsNullOrEmpty(packageRegistry)) {
+  packageRegistry = dockerRegistry;
+}
 
 private string GetSampleImageReference() => $"{EnvironmentVariable("SAMPLE_REGISTRY")}sample-{EnvironmentVariable("SAMPLE_NAME")}:{EnvironmentVariable("SAMPLE_TAG")}";
 
