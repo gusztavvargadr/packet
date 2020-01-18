@@ -13,11 +13,11 @@ var buildVersion = Argument("build-version", string.Empty);
 var projectVersion = Argument("project-version", string.Empty);
 var packageVersion = Argument("package-version", string.Empty);
 
-var sourceRegistry = Argument("source-registry");
+var sourceRegistry = Argument("source-registry", string.Empty);
 if (string.IsNullOrEmpty(sourceRegistry)) {
   sourceRegistry = dockerRegistry;
 }
-var packageRegistry = Argument("package-registry");
+var packageRegistry = Argument("package-registry", string.Empty);
 if (string.IsNullOrEmpty(packageRegistry)) {
   packageRegistry = dockerRegistry;
 }
