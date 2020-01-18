@@ -24,6 +24,8 @@ stages:
             pool:
               vmImage: ubuntu-16.04
 
+            environment: ${{ stage.name }}
+
             workspace:
               clean: all
 
