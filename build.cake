@@ -1,8 +1,12 @@
 #load ./build/cake/core.cake
 
 Task("Restore")
-  .IsDependentOn("Version")
+  .IsDependentOn("RestoreCore")
   .Does(() => {
+    var settings = new DockerComposeBuildSettings {
+    };
+    var services = new [] { "terraform" };
+    DockerComposeBuild(settings, services);
   });
 
 Task("Build")
@@ -38,7 +42,7 @@ Task("Publish")
   .Does(() => {
     var settings = new DockerImagePushSettings {
     };
-    var imageReference = GetDockerImageReference();
+    var imageReference = GetSampleImageReference();
     DockerPush(settings, imageReference);
   });
 

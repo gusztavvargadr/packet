@@ -1,33 +1,17 @@
 #load ./build/cake/core.cake
 
-var dockerRegistryPublish = EnvironmentVariable("DOCKER_REGISTRY_PUBLISH");
-
 Task("Restore")
-  .IsDependentOn("Version")
+  .IsDependentOn("RestoreCore")
   .Does(() => {
     var settings = new DockerImagePullSettings {
     };
-    var imageReference = GetDockerImageReference();
+    var imageReference = GetSampleImageReference();
     DockerPull(settings, imageReference);
-
-    if (!string.IsNullOrEmpty(dockerRegistryPublish)) {
-      dockerRegistry = dockerRegistryPublish;
-      Environment.SetEnvironmentVariable("DOCKER_REGISTRY", dockerRegistry);
-      var registryReference = GetDockerImageReference();
-      DockerTag(imageReference, registryReference);
-    }
   });
 
 Task("Build")
   .IsDependentOn("Restore")
   .Does(() => {
-    {
-      var settings = new DockerComposeRunSettings {
-      };
-      var service = "sample";
-      var command = "init";
-      DockerComposeRun(settings, service, command);
-    }
   });
 
 Task("Test")
@@ -36,13 +20,26 @@ Task("Test")
     var settings = new DockerComposeRunSettings {
     };
     var service = "sample";
-    var command = "plan";
-    DockerComposeRun(settings, service, command);
+    
+    var initCommand = "init";
+    DockerComposeRun(settings, service, initCommand);
+
+    var planCommand = "plan";
+    DockerComposeRun(settings, service, planCommand);
   });
 
 Task("Package")
   .IsDependentOn("Test")
   .Does(() => {
+    var imageReference = GetSampleImageReference();
+
+    Environment.SetEnvironmentVariable("SAMPLE_REGISTRY", packageRegistry);
+    Environment.SetEnvironmentVariable("SAMPLE_NAME", sampleName);
+    Environment.SetEnvironmentVariable("SAMPLE_TAG", packageVersion);
+    var registryReference = GetSampleImageReference();
+
+    Information($"Tagging '{imageReference}' as '{registryReference}'.");
+    DockerTag(imageReference, registryReference);
   });
 
 Task("Publish")
@@ -50,7 +47,7 @@ Task("Publish")
   .Does(() => {
     var settings = new DockerImagePushSettings {
     };
-    var imageReference = GetDockerImageReference();
+    var imageReference = GetSampleImageReference();
     DockerPush(settings, imageReference);
   });
 

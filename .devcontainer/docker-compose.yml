@@ -4,13 +4,14 @@
 #-------------------------------------------------------------------------------------------------------------
 
 version: '3'
+
 services:
   vscode:
     build:
       context: ./
       dockerfile: ./vscode.Dockerfile
       args:
-        DOTNET_VERSION: '2.1'
+        DOTNET_VERSION: '3.1'
         COMPOSE_VERSION: '1.25.1'
         TERRAFORM_VERSION: ${TERRAFORM_VERSION}
         TFLINT_VERSION: '0.13.4'
@@ -22,10 +23,6 @@ services:
 
     environment:
       DOCKER_REGISTRY:
-      SAMPLE_NAME:
-      SAMPLE_VERSION:
-
-      REPO_DIR:
       CONSUL_HTTP_ADDR:
       PACKET_AUTH_TOKEN:
 
