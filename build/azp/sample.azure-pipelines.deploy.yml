@@ -20,11 +20,10 @@ stages:
         - ${{ each sample in stage.samples }}:
           - deployment: deploy_${{ join('_', sample.name) }}
             displayName: Deploy ${{ join('-', sample.name) }}
+            environment: ${{ stage.name }}
 
             pool:
               vmImage: ubuntu-16.04
-
-            environment: ${{ stage.name }}
 
             workspace:
               clean: all
@@ -46,17 +45,17 @@ stages:
                       displayName: Initialize .NET
 
                     - task: DownloadPipelineArtifact@2
+                      displayName: Download Registry Artifacts
                       inputs:
                         artifact: build-${{ join('-', sample.name) }}-registry
                         path: $(Build.SourcesDirectory)/artifacts/registry/
-                      displayName: Download Registry Artifacts
 
                     - ${{ if stage.packageRegistry }}:
                       - task: Docker@2
+                        displayName: Login Docker
                         inputs:
                           command: login
                           containerRegistry: ${{ stage.packageRegistry }}
-                        displayName: Login Docker
 
                     - script: |
                         dotnet cake deploy.cake --target=publish --sample-name=${{ join('-', sample.name) }} --package-registry=$(package-registry)
@@ -66,15 +65,15 @@ stages:
 
                     - script: |
                         dotnet cake deploy.cake --target=clean --sample-name=${{ join('-', sample.name) }} --package-registry=$(package-registry)
-                      env:
-                        PACKET_AUTH_TOKEN: $(packet-auth-token)
                       displayName: Clean Cake
                       condition: always()
+                      env:
+                        PACKET_AUTH_TOKEN: $(packet-auth-token)
 
                     - ${{ if stage.packageRegistry }}:
                       - task: Docker@2
+                        displayName: Logout Docker
+                        condition: always()
                         inputs:
                           command: logout
                           containerRegistry: ${{ stage.packageRegistry }}
-                        displayName: Logout Docker
-                        condition: always()

@@ -39,16 +39,16 @@ stages:
 
               - script: |
                   dotnet cake build.cake --target=publish --sample-name=${{ join('-', sample.name) }}
+                displayName: Publish Cake
                 env:
                   PACKET_AUTH_TOKEN: $(packet-auth-token)
-                displayName: Publish Cake
 
               - script: |
                   dotnet cake build.cake --target=clean  --sample-name=${{ join('-', sample.name) }}
-                env:
-                  PACKET_AUTH_TOKEN: $(packet-auth-token)
                 displayName: Clean Cake
                 condition: always()
+                env:
+                  PACKET_AUTH_TOKEN: $(packet-auth-token)
 
               - script: |
                   sudo chmod -R o+rX ./artifacts/registry/
@@ -56,6 +56,6 @@ stages:
                 condition: always()
 
               - publish: $(Build.SourcesDirectory)/artifacts/registry/
-                artifact: build-${{ join('-', sample.name) }}-registry
                 displayName: Publish Registry Artifacts
                 condition: always()
+                artifact: build-${{ join('-', sample.name) }}-registry
