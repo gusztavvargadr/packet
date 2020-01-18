@@ -16,17 +16,17 @@ stages:
         - name: acceptance
           displayName: Acceptance
           samples: ${{ parameters.samples }}
-          containerRegistry: github-gusztavvargadr
+          packageRegistry: github-gusztavvargadr
           condition: succeeded()
 
         - name: staging
           displayName: Staging
           samples: ${{ parameters.samples }}
-          containerRegistry: github-gusztavvargadr
+          packageRegistry: github-gusztavvargadr
           condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/tags/')))
 
         - name: production
           displayName: Production
           samples: ${{ parameters.samples }}
-          containerRegistry: dockerhub-gusztavvargadr
+          packageRegistry: dockerhub-gusztavvargadr
           condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))

@@ -35,29 +35,27 @@ stages:
                   dotnet tool install Cake.Tool --global --version 0.35.0
 
                   dotnet tool list --global
-                displayName: .NET Init
+                displayName: Initialize .NET
 
               - script: |
-                  dotnet cake build.cake --target=publish
+                  dotnet cake build.cake --target=publish --sample-name=${{ join('-', sample.name) }}
                 env:
-                  SAMPLE_NAME: ${{ join('-', sample.name) }}
                   PACKET_AUTH_TOKEN: $(packet-auth-token)
-                displayName: Cake Publish
+                displayName: Publish Cake
 
               - script: |
-                  dotnet cake build.cake --target=clean
+                  dotnet cake build.cake --target=clean  --sample-name=${{ join('-', sample.name) }}
                 env:
-                  SAMPLE_NAME: ${{ join('-', sample.name) }}
                   PACKET_AUTH_TOKEN: $(packet-auth-token)
-                displayName: Cake Clean
+                displayName: Clean Cake
                 condition: always()
 
               - script: |
-                  sudo chmod -R o+rX ./.registry/
-                displayName: Artifacts Registry Prepare
+                  sudo chmod -R o+rX ./artifacts/registry/
+                displayName: Prepare Registry Artifacts
                 condition: always()
 
-              - publish: $(Build.SourcesDirectory)/.registry/
+              - publish: $(Build.SourcesDirectory)/artifacts/registry/
                 artifact: build-${{ join('-', sample.name) }}-registry
-                displayName: Artifacts Registry Publish
+                displayName: Publish Registry Artifacts
                 condition: always()

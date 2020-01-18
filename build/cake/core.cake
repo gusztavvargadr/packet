@@ -1,22 +1,22 @@
 #addin nuget:?package=Cake.Docker&version=0.11.0
 
-var defaulTarget = "Publish";
-
-var target = Argument("target", defaulTarget);
-
-var defaultConsulHttpAddr = "consul:8500";
+var target = Argument("target", "Publish");
+var sampleName = Argument("sample-name", "device-linux");
 
 var defaultDockerRegistry = "localhost:5000/";
-var defaultSampleName = "device-linux";
-var defaultSampleVersion = "latest";
-
+var dockerRegistry = EnvironmentVariable("DOCKER_REGISTRY", defaultDockerRegistry);
+var defaultConsulHttpAddr = "consul:8500";
 var consulHttpAddr = EnvironmentVariable("CONSUL_HTTP_ADDR", defaultConsulHttpAddr);
 
-var dockerRegistry = EnvironmentVariable("DOCKER_REGISTRY", defaultDockerRegistry);
-var sampleName = EnvironmentVariable("SAMPLE_NAME", defaultSampleName);
-var sampleVersion = EnvironmentVariable("SAMPLE_VERSION", defaultSampleVersion);
+var sourceVersion = Argument("source-version", string.Empty);
+var buildVersion = Argument("build-version", string.Empty);
+var projectVersion = Argument("project-version", string.Empty);
+var packageVersion = Argument("package-version", string.Empty);
 
-private string GetDockerImageReference() => $"{dockerRegistry}sample-{sampleName}:{sampleVersion}";
+var sourceRegistry = Argument("source-registry", dockerRegistry);
+var packageRegistry = Argument("package-registry", dockerRegistry);
+
+private string GetSampleImageReference() => $"{EnvironmentVariable("SAMPLE_REGISTRY")}sample-{EnvironmentVariable("SAMPLE_NAME")}:{EnvironmentVariable("SAMPLE_TAG")}";
 
 Task("Init")
   .Does(() => {
@@ -32,33 +32,55 @@ Task("Init")
 Task("Version")
   .IsDependentOn("Init")
   .Does((context) => {
-    if (sampleVersion == defaultSampleVersion) {
-      var upSettings = new DockerComposeUpSettings {
-      };
-      var upServices = new [] { "gitversion" };
-      DockerComposeUp(upSettings, upServices);
+    if (string.IsNullOrEmpty(sourceVersion)) {
+      {
+        var settings = new DockerComposeUpSettings {
+        };
+        var services = new [] { "gitversion" };
+        DockerComposeUp(settings, services);
+      }
 
-      var logsRunner = new GenericDockerComposeRunner<DockerComposeLogsSettings>(
-        context.FileSystem,
-        context.Environment,
-        context.ProcessRunner,
-        context.Tools
-      );
-      var logsSettings = new DockerComposeLogsSettings {
-        NoColor = true
-      };
-      var logsService = "gitversion";
-      var logsOutput = logsRunner.RunWithResult(
-        "logs",
-        logsSettings,
-        (items) => items.Where(item => item.Contains('|')).ToArray(),
-        logsService
-      ).Last();
+      {
+        var runner = new GenericDockerComposeRunner<DockerComposeLogsSettings>(
+          context.FileSystem,
+          context.Environment,
+          context.ProcessRunner,
+          context.Tools
+        );
+        var settings = new DockerComposeLogsSettings {
+          NoColor = true
+        };
+        var service = "gitversion";
+        var output = runner.RunWithResult(
+          "logs",
+          settings,
+          (items) => items.Where(item => item.Contains('|')).ToArray(),
+          service
+        ).Last();
 
-      sampleVersion = logsOutput.Split('|')[1].Trim();
-      Environment.SetEnvironmentVariable("SAMPLE_VERSION", sampleVersion);
+        sourceVersion = output.Split('|')[1].Trim();
+      }
     }
-    Information($"Sample version: '{sampleVersion}'.");
+    Information($"Source version: '{sourceVersion}'.");
+
+    if (string.IsNullOrEmpty(buildVersion)) {
+      buildVersion = $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}";
+    }
+    Information($"Build version: '{buildVersion}'.");
+
+    if (string.IsNullOrEmpty(projectVersion)) {
+      projectVersion = sourceVersion;
+    }
+    Information($"Project version: '{projectVersion}'.");
+
+    if (string.IsNullOrEmpty(packageVersion)) {
+      packageVersion = sourceVersion;
+    }
+    Information($"Package version: '{packageVersion}'.");
+
+    Environment.SetEnvironmentVariable("SAMPLE_REGISTRY", sourceRegistry);
+    Environment.SetEnvironmentVariable("SAMPLE_NAME", sampleName);
+    Environment.SetEnvironmentVariable("SAMPLE_TAG", sourceVersion);
   });
 
 Task("RestoreCore")

@@ -4,7 +4,7 @@ parameters:
     #   displayName: stage-display-name
     #   samples:
     #     - name: [ sample-name-part-1, sample-name-part-2, ... ]
-    #   containerRegistry: container-registry-name
+    #   packageRegistry: package-registry-service-connection-name
     #   condition: condition-expression
 
 stages:
@@ -38,41 +38,37 @@ stages:
                   dotnet tool install Cake.Tool --global --version 0.35.0
 
                   dotnet tool list --global
-                displayName: .NET Init
+                displayName: Initialize .NET
 
               - task: DownloadPipelineArtifact@2
                 inputs:
                   artifact: build-${{ join('-', sample.name) }}-registry
-                  path: $(Build.SourcesDirectory)/.registry/
-                displayName: Artifacts Registry Download
+                  path: $(Build.SourcesDirectory)/artifacts/registry/
+                displayName: Download Registry Artifacts
 
               - task: Docker@2
                 inputs:
                   command: login
-                  containerRegistry: ${{ stage.containerRegistry }}
-                displayName: Docker Login
-                condition: and(succeeded(), ne(variables['docker-registry-publish'], ''))
+                  containerRegistry: ${{ stage.packageRegistry }}
+                displayName: Login Docker
+                condition: and(succeeded(), ne(variables['package-registry'], ''))
 
               - script: |
-                  dotnet cake deploy.cake --target=publish
-                displayName: Cake Publish
+                  dotnet cake deploy.cake --target=publish --sample-name=${{ join('-', sample.name) }} --package-registry=$(package-registry)
+                displayName: Publish Cake
                 env:
-                  SAMPLE_NAME: ${{ join('-', sample.name) }}
                   PACKET_AUTH_TOKEN: $(packet-auth-token)
-                  DOCKER_REGISTRY_PUBLISH: $(docker-registry-publish)
 
               - script: |
-                  dotnet cake deploy.cake --target=clean
+                  dotnet cake deploy.cake --target=clean --sample-name=${{ join('-', sample.name) }} --package-registry=$(package-registry)
                 env:
-                  SAMPLE_NAME: ${{ join('-', sample.name) }}
                   PACKET_AUTH_TOKEN: $(packet-auth-token)
-                  DOCKER_REGISTRY_PUBLISH: $(docker-registry-publish)
-                displayName: Cake Clean
+                displayName: Clean Cake
                 condition: always()
 
               - task: Docker@2
                 inputs:
                   command: logout
-                  containerRegistry: ${{ stage.containerRegistry }}
-                displayName: Docker Logout
-                condition: ne(variables['docker-registry-publish'], '')
+                  containerRegistry: ${{ stage.packageRegistry }}
+                displayName: Logout Docker
+                condition: ne(variables['package-registry'], '')

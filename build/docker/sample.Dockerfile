@@ -10,6 +10,7 @@ ENV TF_CLI_CONFIG_FILE /root/.terraform.d/.terraformrc
 ADD ./src/ ./src/
 
 ARG SAMPLE_NAME
+
 ADD ./samples/${SAMPLE_NAME}/ ./samples/${SAMPLE_NAME}/
 
 WORKDIR /opt/terraform/samples/${SAMPLE_NAME}/

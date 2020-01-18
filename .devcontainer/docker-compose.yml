@@ -16,17 +16,14 @@ services:
         TERRAFORM_VERSION: ${TERRAFORM_VERSION}
         TFLINT_VERSION: '0.13.4'
         CAKE_VERSION: '0.35.0'
+
     volumes:
       - ../:/workspace/:cached
       - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      REPO_DIR:
 
-      TERRAFORM_VERSION:
+    environment:
+      DOCKER_REGISTRY:
       CONSUL_HTTP_ADDR:
       PACKET_AUTH_TOKEN:
 
-      DOCKER_REGISTRY:
-      SAMPLE_NAME:
-      SAMPLE_VERSION:
     command: sleep infinity

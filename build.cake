@@ -42,7 +42,7 @@ Task("Publish")
   .Does(() => {
     var settings = new DockerImagePushSettings {
     };
-    var imageReference = GetDockerImageReference();
+    var imageReference = GetSampleImageReference();
     DockerPush(settings, imageReference);
   });
 
