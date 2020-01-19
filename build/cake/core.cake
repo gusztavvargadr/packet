@@ -3,21 +3,21 @@
 var target = Argument("target", "Publish");
 var sampleName = Argument("sample-name", "device-linux");
 
-var defaultDockerRegistry = "localhost:5000/";
-var dockerRegistry = EnvironmentVariable("DOCKER_REGISTRY", defaultDockerRegistry);
-var defaultConsulHttpAddr = "consul:8500";
-var consulHttpAddr = EnvironmentVariable("CONSUL_HTTP_ADDR", defaultConsulHttpAddr);
-
 var sourceVersion = Argument("source-version", string.Empty);
 var buildVersion = Argument("build-version", string.Empty);
 var projectVersion = Argument("project-version", string.Empty);
 var packageVersion = Argument("package-version", string.Empty);
 
-var sourceRegistry = Argument("source-registry", string.Empty);
+var defaultDockerRegistry = "localhost:5000/";
+var dockerRegistry = EnvironmentVariable("DOCKER_REGISTRY", defaultDockerRegistry);
+var defaultConsulHttpAddr = "consul:8500";
+var consulHttpAddr = EnvironmentVariable("CONSUL_HTTP_ADDR", defaultConsulHttpAddr);
+
+var sourceRegistry = Argument<string>("source-registry");
 if (string.IsNullOrEmpty(sourceRegistry)) {
   sourceRegistry = dockerRegistry;
 }
-var packageRegistry = Argument("package-registry", string.Empty);
+var packageRegistry = Argument<string>("package-registry");
 if (string.IsNullOrEmpty(packageRegistry)) {
   packageRegistry = dockerRegistry;
 }
