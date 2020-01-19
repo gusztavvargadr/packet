@@ -18,6 +18,9 @@ if (string.IsNullOrEmpty(sourceRegistry)) {
   sourceRegistry = dockerRegistry;
 }
 var packageRegistry = Argument("package-registry", string.Empty);
+if (string.IsNullOrEmpty(packageRegistry)) {
+  packageRegistry = dockerRegistry;
+}
 
 private string GetSampleImageReference() => $"{EnvironmentVariable("SAMPLE_REGISTRY")}sample-{EnvironmentVariable("SAMPLE_NAME")}:{EnvironmentVariable("SAMPLE_TAG")}";
 
@@ -25,11 +28,6 @@ Task("Init")
   .Does(() => {
     StartProcess("docker", "version");
     StartProcess("docker-compose", "version");
-
-    var settings = new DockerComposeBuildSettings {
-    };
-    var services = new [] { "gitversion" };
-    DockerComposeBuild(settings, services);
   });
 
 Task("Version")
@@ -89,14 +87,7 @@ Task("Version")
 Task("RestoreCore")
   .IsDependentOn("Version")
   .Does(() => {
-    {
-      var settings = new DockerComposeBuildSettings {
-      };
-      var services = new [] { "registry", "consul" };
-      DockerComposeBuild(settings, services);
-    }
-
-    if (dockerRegistry == defaultDockerRegistry) {
+    if (sourceRegistry == defaultDockerRegistry) {
       var settings = new DockerComposeUpSettings {
         DetachedMode = true
       };

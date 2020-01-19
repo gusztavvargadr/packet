@@ -3,10 +3,20 @@
 Task("Restore")
   .IsDependentOn("RestoreCore")
   .Does(() => {
-    var settings = new DockerImagePullSettings {
-    };
-    var imageReference = GetSampleImageReference();
-    DockerPull(settings, imageReference);
+    {
+      var settings = new DockerImagePullSettings {
+      };
+      var imageReference = GetSampleImageReference();
+      DockerPull(settings, imageReference);
+    }
+
+    if (packageRegistry == defaultDockerRegistry) {
+      var settings = new DockerComposeUpSettings {
+        DetachedMode = true
+      };
+      var services = new [] { "registry" };
+      DockerComposeUp(settings, services);
+    }
   });
 
 Task("Build")
@@ -32,10 +42,6 @@ Task("Test")
 Task("Package")
   .IsDependentOn("Test")
   .Does(() => {
-    if (string.IsNullOrEmpty(packageRegistry)) {
-      return;
-    }
-
     var imageReference = GetSampleImageReference();
 
     Environment.SetEnvironmentVariable("SAMPLE_REGISTRY", packageRegistry);
@@ -50,10 +56,6 @@ Task("Package")
 Task("Publish")
   .IsDependentOn("Package")
   .Does(() => {
-    if (string.IsNullOrEmpty(packageRegistry)) {
-      return;
-    }
-
     var settings = new DockerImagePushSettings {
     };
     var imageReference = GetSampleImageReference();
