@@ -13,11 +13,11 @@ var dockerRegistry = EnvironmentVariable("DOCKER_REGISTRY", defaultDockerRegistr
 var defaultConsulHttpAddr = "consul:8500";
 var consulHttpAddr = EnvironmentVariable("CONSUL_HTTP_ADDR", defaultConsulHttpAddr);
 
-var sourceRegistry = Argument<string>("source-registry");
+var sourceRegistry = Argument("source-registry", string.Empty);
 if (string.IsNullOrEmpty(sourceRegistry)) {
   sourceRegistry = dockerRegistry;
 }
-var packageRegistry = Argument<string>("package-registry");
+var packageRegistry = Argument("package-registry", string.Empty);
 if (string.IsNullOrEmpty(packageRegistry)) {
   packageRegistry = dockerRegistry;
 }
