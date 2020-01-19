@@ -7,7 +7,7 @@ services:
       dockerfile: ./gitversion.Dockerfile
 
     volumes:
-      - ${REPO_DIR}/:/opt/gitversion
+      - ${REPO_DIR}:/opt/gitversion/
 
     command: /showvariable SemVer
 
@@ -17,7 +17,7 @@ services:
       dockerfile: ./registry.Dockerfile
 
     volumes:
-      - ${REPO_DIR}/artifacts/registry/data/:/var/lib/registry/
+      - ${REPO_DIR}artifacts/registry/data/:/var/lib/registry/
 
     ports:
       - '5000:5000'
@@ -28,7 +28,7 @@ services:
       dockerfile: ./consul.Dockerfile
 
     volumes:
-      - ${REPO_DIR}/artifacts/consul/data/:/consul/data/
+      - ${REPO_DIR}artifacts/consul/data/:/consul/data/
 
     ports:
       - '8500:8500'
@@ -41,7 +41,7 @@ services:
         TERRAFORM_VERSION: ${TERRAFORM_VERSION}
 
     volumes:
-      - ${REPO_DIR}/:/opt/terraform
+      - ${REPO_DIR}:/opt/terraform/
 
     environment:
       CONSUL_HTTP_ADDR:
@@ -58,7 +58,7 @@ services:
     image: ${SAMPLE_REGISTRY}sample-${SAMPLE_NAME}:${SAMPLE_TAG}
 
     volumes:
-      - ${REPO_DIR}/samples/${SAMPLE_NAME}/.terraform/:/opt/terraform/samples/${SAMPLE_NAME}/.terraform/
+      - ${REPO_DIR}samples/${SAMPLE_NAME}/.terraform/:/opt/terraform/samples/${SAMPLE_NAME}/.terraform/
 
     environment:
       CONSUL_HTTP_ADDR:

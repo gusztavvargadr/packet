@@ -12,10 +12,11 @@ Task("Restore")
 Task("Build")
   .IsDependentOn("Restore")
   .Does(() => {
-    var settings = new DockerComposeBuildSettings {
+    var settings = new DockerComposeRunSettings {
     };
-    var services = new [] { "sample" };
-    DockerComposeBuild(settings, services);
+    var service = "terraform";
+    var command = $"init -backend=false ./samples/{sampleName}/";
+    DockerComposeRun(settings, service, command);
   });
 
 Task("Test")
@@ -23,18 +24,18 @@ Task("Test")
   .Does(() => {
     var settings = new DockerComposeRunSettings {
     };
-    var service = "sample";
-
-    var initCommand = "init -backend=false";
-    DockerComposeRun(settings, service, initCommand);
-
-    var validateCommand = "validate";
-    DockerComposeRun(settings, service, validateCommand);
+    var service = "terraform";
+    var command = $"validate ./samples/{sampleName}/";
+    DockerComposeRun(settings, service, command);
   });
 
 Task("Package")
   .IsDependentOn("Test")
   .Does(() => {
+    var settings = new DockerComposeBuildSettings {
+    };
+    var services = new [] { "sample" };
+    DockerComposeBuild(settings, services);
   });
 
 Task("Publish")

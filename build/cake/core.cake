@@ -18,9 +18,6 @@ if (string.IsNullOrEmpty(sourceRegistry)) {
   sourceRegistry = dockerRegistry;
 }
 var packageRegistry = Argument("package-registry", string.Empty);
-if (string.IsNullOrEmpty(packageRegistry)) {
-  packageRegistry = dockerRegistry;
-}
 
 private string GetSampleImageReference() => $"{EnvironmentVariable("SAMPLE_REGISTRY")}sample-{EnvironmentVariable("SAMPLE_NAME")}:{EnvironmentVariable("SAMPLE_TAG")}";
 
