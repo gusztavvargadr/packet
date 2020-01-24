@@ -1,6 +1,6 @@
-parameters:
-  samples: []
-    # - name: [ sample-name-part-1, sample-name-part-2, ... ]
+# parameters:
+#   samples: []
+#     - name: [ sample-name-part-1, sample-name-part-2, ... ]
 
 stages:
   - template: ./sample.azure-pipelines.stages.build.yml

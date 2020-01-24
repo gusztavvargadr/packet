@@ -1,9 +1,9 @@
-parameters:
-  # name: stage-name
-  # displayName: stage-display-name
-  # condition: stage-condition-expression
-  # samples:
-  #   - name: [ sample-name-part-1, sample-name-part-2, ... ]
+# parameters:
+#   name: stage-name
+#   displayName: stage-display-name
+#   condition: stage-condition-expression
+#   samples:
+#     - name: [ sample-name-part-1, sample-name-part-2, ... ]
 
 stages:
   - stage: ${{ parameters.name }}

@@ -1,10 +1,10 @@
-parameters:
-  # name: stage-name
-  # displayName: stage-display-name
-  # condition: stage-condition-expression
-  # samples:
-  #   - name: [ sample-name-part-1, sample-name-part-2, ... ]
-  # packageRegistry: package-registry-service-connection-name
+# parameters:
+#   name: stage-name
+#   displayName: stage-display-name
+#   condition: stage-condition-expression
+#   samples:
+#     - name: [ sample-name-part-1, sample-name-part-2, ... ]
+#   packageRegistry: package-registry-service-connection-name
 
 stages:
   - stage: ${{ parameters.name }}
