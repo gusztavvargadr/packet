@@ -3,19 +3,19 @@ parameters:
     # - name: [ sample-name-part-1, sample-name-part-2, ... ]
 
 stages:
-  - template: ./sample.azure-pipelines.build.yml
+  - template: ./sample.azure-pipelines.stages.build.yml
     parameters:
       name: commit
       displayName: Commit
       samples: ${{ parameters.samples }}
 
-  - template: ./sample.azure-pipelines.deploy.yml
+  - template: ./sample.azure-pipelines.stages.deploy.yml
     parameters:
       name: acceptance
       displayName: Acceptance
       samples: ${{ parameters.samples }}
 
-  - template: ./sample.azure-pipelines.deploy.yml
+  - template: ./sample.azure-pipelines.stages.deploy.yml
     parameters:
       name: staging
       displayName: Staging
@@ -23,7 +23,7 @@ stages:
       samples: ${{ parameters.samples }}
       packageRegistry: github-gusztavvargadr
 
-  - template: ./sample.azure-pipelines.deploy.yml
+  - template: ./sample.azure-pipelines.stages.deploy.yml
     parameters:
       name: production
       displayName: Production
