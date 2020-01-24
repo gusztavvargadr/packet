@@ -32,7 +32,7 @@ stages:
             runOnce:
               deploy:
                 steps:
-                  - template: ./sample.azure-pipeline.steps.initialize.yml
+                  - template: ./sample.azure-pipelines.steps.initialize.yml
 
                   - task: DownloadPipelineArtifact@2
                     displayName: Download Registry Artifacts

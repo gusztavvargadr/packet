@@ -27,7 +27,7 @@ stages:
             clean: all
 
           steps:
-            - template: ./sample.azure-pipeline.steps.initialize.yml
+            - template: ./sample.azure-pipelines.steps.initialize.yml
 
             - script: |
                 dotnet cake build.cake --target=publish --sample-name=${{ join('-', sample.name) }}
