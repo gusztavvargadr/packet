@@ -22,7 +22,7 @@ if (string.IsNullOrEmpty(packageRegistry)) {
   packageRegistry = dockerRegistry;
 }
 
-private string GetSampleImageReference() => $"{EnvironmentVariable("SAMPLE_REGISTRY")}sample-{EnvironmentVariable("SAMPLE_NAME")}:{EnvironmentVariable("SAMPLE_TAG")}";
+private string GetSampleImageReference() => $"{EnvironmentVariable("SAMPLE_REGISTRY")}{EnvironmentVariable("SAMPLE_NAME")}:{EnvironmentVariable("SAMPLE_TAG")}";
 
 Task("Init")
   .Does(() => {
@@ -79,7 +79,7 @@ Task("Version")
     }
     Information($"Package version: '{packageVersion}'.");
 
-    Environment.SetEnvironmentVariable("SAMPLE_REGISTRY", sourceRegistry);
+    Environment.SetEnvironmentVariable("SAMPLE_REGISTRY", $"{sourceRegistry}sample-");
     Environment.SetEnvironmentVariable("SAMPLE_NAME", sampleName);
     Environment.SetEnvironmentVariable("SAMPLE_TAG", sourceVersion);
   });

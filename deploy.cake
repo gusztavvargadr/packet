@@ -44,7 +44,7 @@ Task("Package")
   .Does(() => {
     var imageReference = GetSampleImageReference();
 
-    Environment.SetEnvironmentVariable("SAMPLE_REGISTRY", packageRegistry);
+    Environment.SetEnvironmentVariable("SAMPLE_REGISTRY", $"{packageRegistry}sample-");
     Environment.SetEnvironmentVariable("SAMPLE_NAME", sampleName);
     Environment.SetEnvironmentVariable("SAMPLE_TAG", packageVersion);
     var registryReference = GetSampleImageReference();
