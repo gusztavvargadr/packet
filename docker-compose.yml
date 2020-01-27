@@ -55,7 +55,7 @@ services:
         TERRAFORM_VERSION: ${TERRAFORM_VERSION}
         SAMPLE_NAME: ${SAMPLE_NAME}
 
-    image: ${SAMPLE_REGISTRY}${SAMPLE_NAME}:${SAMPLE_TAG}
+    image: ${SAMPLE_IMAGE}
 
     volumes:
       - ${REPO_DIR}samples/${SAMPLE_NAME}/.terraform/:/opt/terraform/samples/${SAMPLE_NAME}/.terraform/
