@@ -79,7 +79,9 @@ Task("Version")
     }
     Information($"Package version: '{packageVersion}'.");
 
-    Environment.SetEnvironmentVariable("SAMPLE_IMAGE", $"{sourceRegistry}sample-{sampleName}:{sourceVersion}");
+    var sampleImage = $"{sourceRegistry}sample-{sampleName}:{sourceVersion}";
+    Environment.SetEnvironmentVariable("SAMPLE_IMAGE", sampleImage);
+    Information($"SAMPLE_IMAGE: '{sampleImage}'.");
   });
 
 Task("RestoreCore")
