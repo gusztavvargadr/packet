@@ -35,7 +35,7 @@ stages:
                   - template: ./sample.azure-pipelines.steps.initialize.yml
 
                   - task: DownloadPipelineArtifact@2
-                    displayName: Download Registry Artifacts
+                    displayName: Download Registry Artifact
                     inputs:
                       artifact: build-${{ join('-', sample.name) }}-registry
                       path: $(Build.SourcesDirectory)/artifacts/registry/
@@ -49,13 +49,13 @@ stages:
 
                   - script: |
                       dotnet cake deploy.cake --target=publish --sample-name=${{ join('-', sample.name) }} --package-registry=$(package-registry)
-                    displayName: Publish Cake
+                    displayName: Publish Deployment
                     env:
                       PACKET_AUTH_TOKEN: $(packet-auth-token)
 
                   - script: |
                       dotnet cake deploy.cake --target=clean --sample-name=${{ join('-', sample.name) }} --package-registry=$(package-registry)
-                    displayName: Clean Cake
+                    displayName: Clean Deployment
                     condition: always()
                     env:
                       PACKET_AUTH_TOKEN: $(packet-auth-token)
