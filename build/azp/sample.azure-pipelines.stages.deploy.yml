@@ -34,8 +34,6 @@ stages:
                 steps:
                   - template: ./sample.azure-pipelines.steps.initialize.yml
 
-                  - download: none
-
                   - task: DownloadPipelineArtifact@2
                     displayName: Download Registry Artifacts
                     inputs:
