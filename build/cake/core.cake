@@ -1,9 +1,12 @@
 #addin nuget:?package=Cake.Docker&version=0.11.0
+#addin nuget:?package=Cake.SemVer&version=4.0.0
+#addin nuget:?package=semver&version=2.0.4
 
 var target = Argument("target", "Publish");
 var sampleName = Argument("sample-name", "device-linux");
 
 var sourceVersion = Argument("source-version", string.Empty);
+Semver.SemVersion sourceSemVer;
 var buildVersion = Argument("build-version", string.Empty);
 var projectVersion = Argument("project-version", string.Empty);
 var packageVersion = Argument("package-version", string.Empty);
@@ -28,6 +31,9 @@ Task("Init")
   .Does(() => {
     StartProcess("docker", "version");
     StartProcess("docker-compose", "version");
+
+    Environment.SetEnvironmentVariable("SAMPLE_NAME", sampleName);
+    Information($"SAMPLE_NAME: '{sampleName}'.");
   });
 
 Task("Version")
@@ -63,6 +69,7 @@ Task("Version")
       }
     }
     Information($"Source version: '{sourceVersion}'.");
+    sourceSemVer = ParseSemVer(sourceVersion);
 
     if (string.IsNullOrEmpty(buildVersion)) {
       buildVersion = $"{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}";
