@@ -3,15 +3,30 @@
 Task("Restore")
   .IsDependentOn("RestoreCore")
   .Does(() => {
-    var settings = new DockerImagePullSettings {
-    };
-    var imageReference = GetSampleImageReference();
-    DockerPull(settings, imageReference);
+    {
+      var settings = new DockerImagePullSettings {
+      };
+      var imageReference = GetSampleImageReference();
+      DockerPull(settings, imageReference);
+    }
+
+    if (packageRegistry == defaultDockerRegistry) {
+      var settings = new DockerComposeUpSettings {
+        DetachedMode = true
+      };
+      var services = new [] { "registry" };
+      DockerComposeUp(settings, services);
+    }
   });
 
 Task("Build")
   .IsDependentOn("Restore")
   .Does(() => {
+    var settings = new DockerComposeRunSettings {
+    };
+    var service = "sample";
+    var command = "init";
+    DockerComposeRun(settings, service, command);
   });
 
 Task("Test")
@@ -20,12 +35,8 @@ Task("Test")
     var settings = new DockerComposeRunSettings {
     };
     var service = "sample";
-    
-    var initCommand = "init";
-    DockerComposeRun(settings, service, initCommand);
-
-    var planCommand = "plan";
-    DockerComposeRun(settings, service, planCommand);
+    var command = "plan";
+    DockerComposeRun(settings, service, command);
   });
 
 Task("Package")
@@ -33,9 +44,10 @@ Task("Package")
   .Does(() => {
     var imageReference = GetSampleImageReference();
 
-    Environment.SetEnvironmentVariable("SAMPLE_REGISTRY", packageRegistry);
-    Environment.SetEnvironmentVariable("SAMPLE_NAME", sampleName);
-    Environment.SetEnvironmentVariable("SAMPLE_TAG", packageVersion);
+    var sampleImage = $"{packageRegistry}sample-{sampleName}:{packageVersion}";
+    Environment.SetEnvironmentVariable("SAMPLE_IMAGE", sampleImage);
+    Information($"SAMPLE_IMAGE: '{sampleImage}'.");
+
     var registryReference = GetSampleImageReference();
 
     Information($"Tagging '{imageReference}' as '{registryReference}'.");

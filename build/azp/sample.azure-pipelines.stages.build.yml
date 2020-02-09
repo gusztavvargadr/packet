@@ -1,0 +1,53 @@
+# parameters:
+#   name: stage-name
+#   displayName: stage-display-name
+#   condition: stage-condition-expression
+#   samples:
+#     - name: [ sample-name-part-1, sample-name-part-2, ... ]
+
+stages:
+  - stage: ${{ parameters.name }}
+    displayName: ${{ parameters.displayName }}
+    ${{ if parameters.condition }}:
+      condition: ${{ parameters.condition }}
+
+    variables:
+      - group: pipeline
+      - group: stage-${{ parameters.name }}
+
+    jobs:
+      - ${{ each sample in parameters.samples }}:
+        - job: build_${{ join('_', sample.name) }}
+          displayName: Build ${{ join('-', sample.name) }}
+
+          pool:
+            vmImage: ubuntu-16.04
+
+          workspace:
+            clean: all
+
+          steps:
+            - template: ./sample.azure-pipelines.steps.initialize.yml
+
+            - script: |
+                dotnet cake build.cake --target=publish --sample-name=${{ join('-', sample.name) }}
+              displayName: Publish Build
+              env:
+                PACKET_AUTH_TOKEN: $(packet-auth-token)
+
+            - script: |
+                dotnet cake build.cake --target=clean --sample-name=${{ join('-', sample.name) }}
+              displayName: Clean Build
+              condition: always()
+              env:
+                PACKET_AUTH_TOKEN: $(packet-auth-token)
+
+            - script: |
+                sudo chmod -R o+rX ./artifacts/registry/
+              displayName: Initialize Registry Artifact
+              condition: always()
+
+            - publish: $(Build.SourcesDirectory)/artifacts/registry/
+              displayName: Publish Registry Artifact
+              condition: always()
+              artifact: build-${{ join('-', sample.name) }}-registry

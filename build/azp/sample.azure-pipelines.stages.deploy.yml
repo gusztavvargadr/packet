@@ -1,0 +1,69 @@
+# parameters:
+#   name: stage-name
+#   displayName: stage-display-name
+#   condition: stage-condition-expression
+#   samples:
+#     - name: [ sample-name-part-1, sample-name-part-2, ... ]
+#   packageRegistry: package-registry-service-connection-name
+
+stages:
+  - stage: ${{ parameters.name }}
+    displayName: ${{ parameters.displayName }}
+    ${{ if parameters.condition }}:
+      condition: ${{ parameters.condition }}
+
+    variables:
+      - group: pipeline
+      - group: stage-${{ parameters.name }}
+
+    jobs:
+      - ${{ each sample in parameters.samples }}:
+        - deployment: deploy_${{ join('_', sample.name) }}
+          displayName: Deploy ${{ join('-', sample.name) }}
+          environment: ${{ parameters.name }}
+
+          pool:
+            vmImage: ubuntu-16.04
+
+          workspace:
+            clean: all
+
+          strategy:
+            runOnce:
+              deploy:
+                steps:
+                  - template: ./sample.azure-pipelines.steps.initialize.yml
+
+                  - task: DownloadPipelineArtifact@2
+                    displayName: Download Registry Artifact
+                    inputs:
+                      artifact: build-${{ join('-', sample.name) }}-registry
+                      path: $(Build.SourcesDirectory)/artifacts/registry/
+
+                  - ${{ if parameters.packageRegistry }}:
+                    - task: Docker@2
+                      displayName: Login Docker
+                      inputs:
+                        command: login
+                        containerRegistry: ${{ parameters.packageRegistry }}
+
+                  - script: |
+                      dotnet cake deploy.cake --target=publish --sample-name=${{ join('-', sample.name) }} --package-registry=$(package-registry)
+                    displayName: Publish Deployment
+                    env:
+                      PACKET_AUTH_TOKEN: $(packet-auth-token)
+
+                  - script: |
+                      dotnet cake deploy.cake --target=clean --sample-name=${{ join('-', sample.name) }} --package-registry=$(package-registry)
+                    displayName: Clean Deployment
+                    condition: always()
+                    env:
+                      PACKET_AUTH_TOKEN: $(packet-auth-token)
+
+                  - ${{ if parameters.packageRegistry }}:
+                    - task: Docker@2
+                      displayName: Logout Docker
+                      condition: always()
+                      inputs:
+                        command: logout
+                        containerRegistry: ${{ parameters.packageRegistry }}

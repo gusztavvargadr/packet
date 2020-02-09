@@ -1,0 +1,19 @@
+# parameters:
+
+steps:
+  - checkout: self
+    submodules: recursive
+
+  - download: none
+
+  - task: UseDotNet@2
+    displayName: Initialize .NET CLI
+    inputs:
+      version: '3.1.x'
+
+  - task: DotNetCoreCLI@2
+    displayName: Initialize .NET Tool Cake
+    inputs:
+      command: custom
+      custom: tool
+      arguments: install Cake.Tool --global --version 0.35.0

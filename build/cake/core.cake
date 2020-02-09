@@ -3,15 +3,15 @@
 var target = Argument("target", "Publish");
 var sampleName = Argument("sample-name", "device-linux");
 
-var defaultDockerRegistry = "localhost:5000/";
-var dockerRegistry = EnvironmentVariable("DOCKER_REGISTRY", defaultDockerRegistry);
-var defaultConsulHttpAddr = "consul:8500";
-var consulHttpAddr = EnvironmentVariable("CONSUL_HTTP_ADDR", defaultConsulHttpAddr);
-
 var sourceVersion = Argument("source-version", string.Empty);
 var buildVersion = Argument("build-version", string.Empty);
 var projectVersion = Argument("project-version", string.Empty);
 var packageVersion = Argument("package-version", string.Empty);
+
+var defaultDockerRegistry = "localhost:5000/";
+var dockerRegistry = EnvironmentVariable("DOCKER_REGISTRY", defaultDockerRegistry);
+var defaultConsulHttpAddr = "consul:8500";
+var consulHttpAddr = EnvironmentVariable("CONSUL_HTTP_ADDR", defaultConsulHttpAddr);
 
 var sourceRegistry = Argument("source-registry", string.Empty);
 if (string.IsNullOrEmpty(sourceRegistry)) {
@@ -22,17 +22,12 @@ if (string.IsNullOrEmpty(packageRegistry)) {
   packageRegistry = dockerRegistry;
 }
 
-private string GetSampleImageReference() => $"{EnvironmentVariable("SAMPLE_REGISTRY")}sample-{EnvironmentVariable("SAMPLE_NAME")}:{EnvironmentVariable("SAMPLE_TAG")}";
+private string GetSampleImageReference() => EnvironmentVariable("SAMPLE_IMAGE");
 
 Task("Init")
   .Does(() => {
     StartProcess("docker", "version");
     StartProcess("docker-compose", "version");
-
-    var settings = new DockerComposeBuildSettings {
-    };
-    var services = new [] { "gitversion" };
-    DockerComposeBuild(settings, services);
   });
 
 Task("Version")
@@ -84,22 +79,15 @@ Task("Version")
     }
     Information($"Package version: '{packageVersion}'.");
 
-    Environment.SetEnvironmentVariable("SAMPLE_REGISTRY", sourceRegistry);
-    Environment.SetEnvironmentVariable("SAMPLE_NAME", sampleName);
-    Environment.SetEnvironmentVariable("SAMPLE_TAG", sourceVersion);
+    var sampleImage = $"{sourceRegistry}sample-{sampleName}:{sourceVersion}";
+    Environment.SetEnvironmentVariable("SAMPLE_IMAGE", sampleImage);
+    Information($"SAMPLE_IMAGE: '{sampleImage}'.");
   });
 
 Task("RestoreCore")
   .IsDependentOn("Version")
   .Does(() => {
-    {
-      var settings = new DockerComposeBuildSettings {
-      };
-      var services = new [] { "registry", "consul" };
-      DockerComposeBuild(settings, services);
-    }
-
-    if (dockerRegistry == defaultDockerRegistry) {
+    if (sourceRegistry == defaultDockerRegistry) {
       var settings = new DockerComposeUpSettings {
         DetachedMode = true
       };
