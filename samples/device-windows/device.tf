@@ -9,12 +9,13 @@ module "device" {
   device_plan      = "${local.device_plan}"
   device_os_name   = "${local.device_os_name}"
   device_user_data = "${file("${local.device_user_data_file_path}")}"
+  device_count     = "${local.device_count}"
 }
 
 locals {
-  device_id   = "${module.device.device_id}"
-  device_name = "${module.device.device_name}"
-  device_ip   = "${module.device.device_ip}"
+  device_ids   = "${module.device.device_ids}"
+  device_names = "${module.device.device_names}"
+  device_ips   = "${module.device.device_ips}"
 
   key_id      = "${module.device.key_id}"
   key_name    = "${module.device.key_name}"

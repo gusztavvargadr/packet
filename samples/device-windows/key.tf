@@ -4,11 +4,11 @@ locals {
 }
 
 resource "local_file" "key_public" {
-  content  = "${local.key_public}"
-  filename = "${local.key_public_file_path}"
+  content  = local.key_public
+  filename = local.key_public_file_path
 }
 
 resource "local_file" "key_private" {
-  sensitive_content = "${local.key_private}"
-  filename          = "${local.key_private_file_path}"
+  sensitive_content = local.key_private
+  filename          = local.key_private_file_path
 }

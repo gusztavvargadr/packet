@@ -5,15 +5,15 @@ locals {
 }
 
 resource "tls_private_key" "key" {
-  algorithm = "${local.key_algorithm}"
-  rsa_bits  = "${local.key_rsa_bits}"
+  algorithm = local.key_algorithm
+  rsa_bits  = local.key_rsa_bits
 }
 
 resource "packet_project_ssh_key" "key" {
-  project_id = "${local.project_id}"
+  project_id = local.project_id
 
-  name       = "${local.key_name}"
-  public_key = "${tls_private_key.key.public_key_openssh}"
+  name       = local.key_name
+  public_key = tls_private_key.key.public_key_openssh
 }
 
 locals {

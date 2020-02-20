@@ -17,6 +17,14 @@ Task("Restore")
       var services = new [] { "registry" };
       DockerComposeUp(settings, services);
     }
+    
+    {
+      var settings = new DockerComposeRunSettings {
+      };
+      var service = "sample";
+      var command = "init";
+      DockerComposeRun(settings, service, command);
+    }
   });
 
 Task("Build")
@@ -25,18 +33,13 @@ Task("Build")
     var settings = new DockerComposeRunSettings {
     };
     var service = "sample";
-    var command = "init";
+    var command = "plan";
     DockerComposeRun(settings, service, command);
   });
 
 Task("Test")
   .IsDependentOn("Build")
   .Does(() => {
-    var settings = new DockerComposeRunSettings {
-    };
-    var service = "sample";
-    var command = "plan";
-    DockerComposeRun(settings, service, command);
   });
 
 Task("Package")
