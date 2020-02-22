@@ -22,6 +22,10 @@ variable "device_user_data_file_path" {
   default = "device_userdata.sh"
 }
 
+variable "device_count" {
+  default = 1
+}
+
 locals {
   configuration_name = "${var.configuration_name}"
   deployment_name    = "${local.configuration_name}-${terraform.workspace}"
@@ -32,18 +36,19 @@ locals {
   device_plan                = "${var.device_plan}"
   device_os_name             = "${var.device_os_name}"
   device_user_data_file_path = "${path.root}/${var.device_user_data_file_path}"
+  device_count               = "${var.device_count}"
 }
 
-output "device_id" {
-  value = "${local.device_id}"
+output "device_ids" {
+  value = "${local.device_ids}"
 }
 
-output "device_name" {
-  value = "${local.device_name}"
+output "device_names" {
+  value = "${local.device_names}"
 }
 
-output "device_ip" {
-  value = "${local.device_ip}"
+output "device_ips" {
+  value = "${local.device_ips}"
 }
 
 output "key_id" {

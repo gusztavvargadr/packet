@@ -39,16 +39,16 @@ locals {
   device_count         = "${var.device_count}"
 }
 
-output "device_id" {
-  value = "${local.device_id}"
+output "device_ids" {
+  value = "${local.device_ids}"
 }
 
-output "device_name" {
-  value = "${local.device_name}"
+output "device_names" {
+  value = "${local.device_names}"
 }
 
-output "device_ip" {
-  value = "${local.device_ip}"
+output "device_ips" {
+  value = "${local.device_ips}"
 }
 
 output "key_id" {

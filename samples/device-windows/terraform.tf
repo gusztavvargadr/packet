@@ -7,17 +7,17 @@ terraform {
 }
 
 provider "packet" {
-  version = ">= 2.7.0"
+  version = "= 2.7.3"
 }
 
 provider "tls" {
-  version = ">= 2.1.0"
+  version = "= 2.1.1"
 }
 
 provider "local" {
-  version = ">= 1.4.0"
+  version = "= 1.4.0"
 }
 
 provider "null" {
-  version = ">= 2.1.0"
+  version = "= 2.1.2"
 }

@@ -1,13 +1,13 @@
 resource "null_resource" "provision" {
   triggers = {
-    device_id = "${local.device_id}"
+    device_id = local.device_ids[count.index]
   }
 
   connection {
     type        = "ssh"
-    host        = "${local.device_ip}"
+    host        = local.device_ips[count.index]
     user        = "root"
-    private_key = "${local.key_private}"
+    private_key = local.key_private
   }
 
   provisioner "remote-exec" {
@@ -15,4 +15,6 @@ resource "null_resource" "provision" {
       "echo 'Hello World!'",
     ]
   }
+
+  count = local.device_count
 }
