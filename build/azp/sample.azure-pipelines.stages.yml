@@ -18,7 +18,7 @@ stages:
       samples: ${{ parameters.samples }}
       packageVersions:
         - ''
-        - 'test'
+        - 'beta'
 
   - template: ./sample.azure-pipelines.stages.deploy.yml
     parameters:
