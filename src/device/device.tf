@@ -7,7 +7,7 @@ resource "packet_device" "device" {
   project_id = local.project_id
 
   hostname         = "${local.device_hostname}-${count.index}"
-  facilities       = ["${local.device_facility}"]
+  facilities       = local.device_facilities
   plan             = local.device_plan
   billing_cycle    = local.device_billing_cycle
   operating_system = local.operating_system_slug

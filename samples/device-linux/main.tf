@@ -6,8 +6,8 @@ variable "project_name" {
   default = "default"
 }
 
-variable "device_facility" {
-  default = "ams1"
+variable "device_facilities" {
+  default = [ "ams1", "ewr1", "ny5", "iad2", "dfw2", "sjc1", "sin3", "nrt1" ]
 }
 
 variable "device_plan" {
@@ -19,7 +19,7 @@ variable "device_os_name" {
 }
 
 variable "device_user_data_file_path" {
-  default = "device_userdata.sh"
+  default = "./device_userdata.sh"
 }
 
 variable "device_count" {
@@ -32,7 +32,7 @@ locals {
 
   project_name = "${var.project_name}"
 
-  device_facility            = "${var.device_facility}"
+  device_facilities          = "${var.device_facilities}"
   device_plan                = "${var.device_plan}"
   device_os_name             = "${var.device_os_name}"
   device_user_data_file_path = "${path.root}/${var.device_user_data_file_path}"

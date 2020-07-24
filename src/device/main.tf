@@ -6,8 +6,8 @@ variable "project_name" {
   type = string
 }
 
-variable "device_facility" {
-  type = string
+variable "device_facilities" {
+  type = list(string)
 }
 
 variable "device_plan" {
@@ -31,7 +31,7 @@ locals {
 
   project_name = "${var.project_name}"
 
-  device_facility      = "${var.device_facility}"
+  device_facilities    = "${var.device_facilities}"
   device_plan          = "${var.device_plan}"
   device_billing_cycle = "hourly"
   device_os_name       = "${var.device_os_name}"
