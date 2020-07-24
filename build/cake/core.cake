@@ -29,8 +29,8 @@ private string GetSampleImageReference() => EnvironmentVariable("SAMPLE_IMAGE");
 
 Task("Init")
   .Does(() => {
-    StartProcess("docker", "version");
-    StartProcess("docker-compose", "version");
+    StartProcess("docker", "--version");
+    StartProcess("docker-compose", "--version");
 
     Environment.SetEnvironmentVariable("SAMPLE_NAME", sampleName);
     Information($"SAMPLE_NAME: '{sampleName}'.");

@@ -16,5 +16,3 @@ ADD ./samples/${SAMPLE_NAME}/ ./samples/${SAMPLE_NAME}/
 WORKDIR /opt/terraform/samples/${SAMPLE_NAME}/
 
 RUN terraform init -backend=false
-
-CMD [ "-help" ]
