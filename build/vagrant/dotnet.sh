@@ -14,3 +14,4 @@ sudo apt-get install -y dotnet-sdk-3.1
 dotnet tool install --global Cake.Tool
 
 dotnet --info
+dotnet tool list --global
