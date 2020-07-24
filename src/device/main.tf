@@ -1,21 +1,21 @@
 variable "deployment_name" {
-  default = "gusztavvargadr-packet-device-default"
+  default = "packet-device"
 }
 
 variable "project_name" {
-  default = "default"
+  type = string
 }
 
 variable "device_facility" {
-  default = "ewr1"
+  type = string
 }
 
 variable "device_plan" {
-  default = "t1.small.x86"
+  type = string
 }
 
 variable "device_os_name" {
-  default = "Ubuntu 16.04 LTS"
+  type = string
 }
 
 variable "device_user_data" {

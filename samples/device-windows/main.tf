@@ -1,5 +1,5 @@
 variable "configuration_name" {
-  default = "gusztavvargadr-packet-sample-device-windows"
+  default = "packet-samples-device-windows"
 }
 
 variable "project_name" {
@@ -7,7 +7,7 @@ variable "project_name" {
 }
 
 variable "device_facility" {
-  default = "ewr1"
+  default = "ams1"
 }
 
 variable "device_plan" {
