@@ -86,7 +86,7 @@ Task("Version")
     }
     Information($"Package version: '{packageVersion}'.");
 
-    var sampleImage = $"{sourceRegistry}sample-{sampleName}:{sourceVersion}";
+    var sampleImage = $"{sourceRegistry}samples-{sampleName}:{sourceVersion}";
     Environment.SetEnvironmentVariable("SAMPLE_IMAGE", sampleImage);
     Information($"SAMPLE_IMAGE: '{sampleImage}'.");
   });

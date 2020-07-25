@@ -30,8 +30,8 @@ services:
 
   terraform:
     build:
-      context: ./build/docker/
-      dockerfile: ./terraform.Dockerfile
+      context: ./
+      dockerfile: ./build/docker/terraform.Dockerfile
       args:
         TERRAFORM_VERSION: ${TERRAFORM_VERSION}
     volumes:
@@ -39,7 +39,7 @@ services:
     environment:
       CONSUL_HTTP_ADDR:
       PACKET_AUTH_TOKEN:
-    command: -help
+    entrypoint: /bin/sh
 
   sample:
     build:
