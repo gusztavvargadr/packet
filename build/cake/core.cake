@@ -11,7 +11,7 @@ var buildVersion = Argument("build-version", string.Empty);
 var projectVersion = Argument("project-version", string.Empty);
 var packageVersion = Argument("package-version", string.Empty);
 
-var defaultDockerRegistry = "localhost:5000/";
+var defaultDockerRegistry = "localhost:5000/packet_";
 var dockerRegistry = EnvironmentVariable("DOCKER_REGISTRY", defaultDockerRegistry);
 var defaultConsulHttpAddr = "consul:8500";
 var consulHttpAddr = EnvironmentVariable("CONSUL_HTTP_ADDR", defaultConsulHttpAddr);
