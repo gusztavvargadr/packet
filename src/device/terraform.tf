@@ -3,6 +3,6 @@ terraform {
 
   required_providers {
     packet = ">= 2.10.0"
-    tls    = ">= 2.1.0"
+    tls    = ">= 2.2.0"
   } 
 }

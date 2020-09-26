@@ -7,7 +7,7 @@ variable "project_name" {
 }
 
 variable "device_facilities" {
-  default = [ "ams1", "ewr1", "ny5", "iad2", "dfw2", "sjc1", "sin3", "nrt1" ]
+  default = [ "ams1", "ewr1", "ny5", "iad2", "dc13", "dfw2", "sjc1", "sv15", "sin3", "nrt1" ]
 }
 
 variable "device_plan" {
