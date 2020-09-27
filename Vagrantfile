@@ -14,6 +14,6 @@ Vagrant.configure("2") do |config|
   config.vm.synced_folder ".", "/vagrant", disabled: true
   config.vm.synced_folder ".", "/home/vagrant/source"
 
-  config.vm.provision "git", type:"shell", path: "./build/vagrant/git.sh", privileged: false
-  config.vm.provision "dotnet", type:"shell", path: "./build/vagrant/dotnet.sh", privileged: false
+  config.vm.provision "git", type: "shell", path: "./build/vagrant/git.sh", privileged: false
+  config.vm.provision "dotnet", type: "shell", path: "./build/vagrant/dotnet.sh", privileged: false
 end

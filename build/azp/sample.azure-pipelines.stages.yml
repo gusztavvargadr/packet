@@ -17,19 +17,20 @@ stages:
       displayName: Acceptance
       samples: ${{ parameters.samples }}
       packageVersions:
-        - ''
+        - ""
         # - 'beta'
+      packageRegistry: dockerhub-gusztavvargadr
 
   - template: ./sample.azure-pipelines.stages.deploy.yml
     parameters:
       name: staging
       displayName: Staging
-      condition: and(succeeded(), or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release')))
+      condition: and(succeeded(), or(startsWith(variables['Build.SourceBranch'], 'refs/tags/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release'), startsWith(variables['Build.SourceBranch'], 'refs/heads/master')))
       samples: ${{ parameters.samples }}
       packageVersions:
-        - ''
+        - ""
         # - 'rc'
-      packageRegistry: github-gusztavvargadr
+      packageRegistry: dockerhub-gusztavvargadr
 
   - template: ./sample.azure-pipelines.stages.deploy.yml
     parameters:
@@ -38,6 +39,6 @@ stages:
       condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
       samples: ${{ parameters.samples }}
       packageVersions:
-        - ''
+        - ""
         # - 'latest'
       packageRegistry: dockerhub-gusztavvargadr

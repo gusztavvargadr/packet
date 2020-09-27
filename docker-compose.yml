@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 services:
   gitversion:
@@ -16,7 +16,7 @@ services:
     volumes:
       - ./artifacts/registry/data/:/var/lib/registry/
     ports:
-      - '5000:5000'
+      - "5000:5000"
 
   consul:
     build:
@@ -25,7 +25,7 @@ services:
     volumes:
       - ./artifacts/consul/data/:/consul/data/
     ports:
-      - '8500:8500'
+      - "8500:8500"
     command: agent
 
   terraform:
