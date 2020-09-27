@@ -19,7 +19,7 @@ stages:
       packageVersions:
         - ""
         # - 'beta'
-      packageRegistry: dockerhub-gusztavvargadr
+      packageRegistry: github-gusztavvargadr
 
   - template: ./sample.azure-pipelines.stages.deploy.yml
     parameters:
@@ -30,7 +30,7 @@ stages:
       packageVersions:
         - ""
         # - 'rc'
-      packageRegistry: dockerhub-gusztavvargadr
+      packageRegistry: github-gusztavvargadr
 
   - template: ./sample.azure-pipelines.stages.deploy.yml
     parameters:

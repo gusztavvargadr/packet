@@ -1,15 +1,15 @@
 trigger:
   branches:
     include:
-      - '*'
+      - "*"
   tags:
     include:
-      - '*'
+      - "*"
 pr: none
 
 stages:
   - template: ./build/azp/sample.azure-pipelines.stages.yml
     parameters:
       samples:
-        - name: [ 'device', 'linux' ]
-        - name: [ 'device', 'windows' ]
+        - name: ["device", "linux"]
+        - name: ["device", "windows"]
