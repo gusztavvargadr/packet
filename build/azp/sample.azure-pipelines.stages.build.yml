@@ -32,13 +32,13 @@ stages:
               - template: ./sample.azure-pipelines.steps.initialize.yml
 
               - script: |
-                  dotnet cake build.cake --target=publish --sample-name=${{ join('-', sample.name) }} --artifact-registry=${artifact-registry}
+                  dotnet cake build.cake --target=publish --sample-name=${{ join('-', sample.name) }} --artifact-registry=$(artifact-registry)
                 displayName: Publish Build
                 env:
                   PACKET_AUTH_TOKEN: $(packet-auth-token)
 
               - script: |
-                  dotnet cake build.cake --target=clean --sample-name=${{ join('-', sample.name) }} --artifact-registry=${artifact-registry}
+                  dotnet cake build.cake --target=clean --sample-name=${{ join('-', sample.name) }} --artifact-registry=$(artifact-registry)
                 displayName: Clean Build
                 condition: always()
                 env:

@@ -55,13 +55,13 @@ stages:
                                 containerRegistry: ${{ parameters.packageRegistry }}
 
                         - script: |
-                            dotnet cake deploy.cake --target=publish --sample-name=${{ join('-', sample.name) }} --package-version=${{ packageVersion }} --artifact-registry=${artifact-registry} --deploy-registry=$(deploy-registry)
+                            dotnet cake deploy.cake --target=publish --sample-name=${{ join('-', sample.name) }} --package-version=${{ packageVersion }} --artifact-registry=$(artifact-registry) --deploy-registry=$(deploy-registry)
                           displayName: Publish Deployment
                           env:
                             PACKET_AUTH_TOKEN: $(packet-auth-token)
 
                         - script: |
-                            dotnet cake deploy.cake --target=clean --sample-name=${{ join('-', sample.name) }} --package-version=${{ packageVersion }} --artifact-registry=${artifact-registry} --deploy-registry=$(deploy-registry)
+                            dotnet cake deploy.cake --target=clean --sample-name=${{ join('-', sample.name) }} --package-version=${{ packageVersion }} --artifact-registry=$(artifact-registry) --deploy-registry=$(deploy-registry)
                           displayName: Clean Deployment
                           condition: always()
                           env:
