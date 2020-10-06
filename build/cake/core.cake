@@ -11,29 +11,28 @@ var buildVersion = Argument("build-version", string.Empty);
 var projectVersion = Argument("project-version", string.Empty);
 var packageVersion = Argument("package-version", string.Empty);
 
-var defaultDockerRegistry = "localhost:5000/packet_";
+var defaultDockerRegistry = "localhost:5000/";
 var dockerRegistry = EnvironmentVariable("DOCKER_REGISTRY", defaultDockerRegistry);
 var defaultConsulHttpAddr = "consul:8500";
 var consulHttpAddr = EnvironmentVariable("CONSUL_HTTP_ADDR", defaultConsulHttpAddr);
 
-var sourceRegistry = Argument("source-registry", string.Empty);
-if (string.IsNullOrEmpty(sourceRegistry)) {
-  sourceRegistry = dockerRegistry;
+var artifactRegistry = Argument("artifact-registry", string.Empty);
+if (string.IsNullOrEmpty(artifactRegistry)) {
+  artifactRegistry = dockerRegistry;
 }
-var packageRegistry = Argument("package-registry", string.Empty);
-if (string.IsNullOrEmpty(packageRegistry)) {
-  packageRegistry = dockerRegistry;
+var deployRegistry = Argument("deploy-registry", string.Empty);
+if (string.IsNullOrEmpty(deployRegistry)) {
+  deployRegistry = dockerRegistry;
 }
 
-private string GetSampleImageReference() => EnvironmentVariable("SAMPLE_IMAGE");
+private string GetSampleImageReference() => "packet_sample:latest";
+private string GetArtifactImageReference() => $"{artifactRegistry}sample-{sampleName}:{packageVersion}";
+private string GetDeployImageReference() => $"{deployRegistry}sample-{sampleName}:{packageVersion}";
 
 Task("Init")
   .Does(() => {
     StartProcess("docker", "--version");
     StartProcess("docker-compose", "--version");
-
-    Environment.SetEnvironmentVariable("SAMPLE_NAME", sampleName);
-    Information($"SAMPLE_NAME: '{sampleName}'.");
   });
 
 Task("Version")
@@ -44,6 +43,7 @@ Task("Version")
         var settings = new DockerComposeUpSettings {
         };
         var services = new [] { "gitversion" };
+
         DockerComposeUp(settings, services);
       }
 
@@ -86,19 +86,19 @@ Task("Version")
     }
     Information($"Package version: '{packageVersion}'.");
 
-    var sampleImage = $"{sourceRegistry}samples-{sampleName}:{sourceVersion}";
-    Environment.SetEnvironmentVariable("SAMPLE_IMAGE", sampleImage);
-    Information($"SAMPLE_IMAGE: '{sampleImage}'.");
+    Environment.SetEnvironmentVariable("SAMPLE_NAME", sampleName);
+    Information($"SAMPLE_NAME: '{sampleName}'.");
   });
 
 Task("RestoreCore")
   .IsDependentOn("Version")
   .Does(() => {
-    if (sourceRegistry == defaultDockerRegistry) {
+    if (artifactRegistry == defaultDockerRegistry || deployRegistry == defaultDockerRegistry) {
       var settings = new DockerComposeUpSettings {
         DetachedMode = true
       };
       var services = new [] { "registry" };
+
       DockerComposeUp(settings, services);
     }
 
@@ -107,15 +107,17 @@ Task("RestoreCore")
         DetachedMode = true
       };
       var services = new [] { "consul" };
+
       DockerComposeUp(settings, services);
     }
   });
 
-Task("Clean")
+Task("CleanCore")
   .IsDependentOn("Version")
   .Does(() => {
     var settings = new DockerComposeDownSettings {
       Rmi = "all"
     };
+
     DockerComposeDown(settings);
   });

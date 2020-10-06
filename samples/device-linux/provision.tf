@@ -4,7 +4,7 @@ resource "null_resource" "provision" {
   }
 
   provisioner "local-exec" {
-    command = "ssh -oStrictHostKeyChecking=no -i ${local.key_private_file_path} root@${local.device_ips[count.index]} echo 'Hello World!'"
+    command = "ssh -oStrictHostKeyChecking=no -i ${local.key_private_file_path} ${local.device_username}@${local.device_ips[count.index]} echo 'Hello World!'"
   }
 
   count = local.device_count

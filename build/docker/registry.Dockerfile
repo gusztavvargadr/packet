@@ -1,1 +1,3 @@
-FROM library/registry:2.7.1
+ARG REGISTRY_VERSION
+
+FROM library/registry:${REGISTRY_VERSION}

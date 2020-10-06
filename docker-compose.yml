@@ -5,6 +5,8 @@ services:
     build:
       context: ./build/docker/
       dockerfile: ./gitversion.Dockerfile
+      args:
+        GITVERSION_VERSION: ${GITVERSION_VERSION}
     volumes:
       - ./:/opt/gitversion/
     command: /showvariable SemVer
@@ -13,6 +15,8 @@ services:
     build:
       context: ./build/docker/
       dockerfile: ./registry.Dockerfile
+      args:
+        REGISTRY_VERSION: ${REGISTRY_VERSION}
     volumes:
       - ./artifacts/registry/data/:/var/lib/registry/
     ports:
@@ -22,24 +26,13 @@ services:
     build:
       context: ./build/docker/
       dockerfile: ./consul.Dockerfile
+      args:
+        CONSUL_VERSION: ${CONSUL_VERSION}
     volumes:
       - ./artifacts/consul/data/:/consul/data/
     ports:
       - "8500:8500"
     command: agent
-
-  terraform:
-    build:
-      context: ./
-      dockerfile: ./build/docker/terraform.Dockerfile
-      args:
-        TERRAFORM_VERSION: ${TERRAFORM_VERSION}
-    volumes:
-      - ./:/opt/terraform/
-    environment:
-      CONSUL_HTTP_ADDR:
-      PACKET_AUTH_TOKEN:
-    entrypoint: /bin/sh
 
   sample:
     build:
@@ -48,7 +41,6 @@ services:
       args:
         TERRAFORM_VERSION: ${TERRAFORM_VERSION}
         SAMPLE_NAME: ${SAMPLE_NAME}
-    image: ${SAMPLE_IMAGE}
     volumes:
       - ./samples/${SAMPLE_NAME}/.terraform/:/opt/terraform/samples/${SAMPLE_NAME}/.terraform/
     environment:

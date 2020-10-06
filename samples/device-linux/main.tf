@@ -1,5 +1,5 @@
 variable "configuration_name" {
-  default = "packet-samples-device-linux"
+  default = "sample-device-linux"
 }
 
 variable "project_name" {
@@ -7,7 +7,7 @@ variable "project_name" {
 }
 
 variable "device_facilities" {
-  default = [ "ams1", "ewr1", "ny5", "iad2", "dc13", "dfw2", "sjc1", "sv15", "sin3", "nrt1" ]
+  default = [ "ams1", "am6", "ewr1", "ny5", "iad2", "dc13", "dfw2", "sjc1", "sv15", "sin3", "nrt1" ]
 }
 
 variable "device_plan" {
@@ -20,6 +20,10 @@ variable "device_os_name" {
 
 variable "device_user_data_file_path" {
   default = "./device_userdata.sh"
+}
+
+variable "device_username" {
+  default = "root"
 }
 
 variable "device_count" {
@@ -36,6 +40,7 @@ locals {
   device_plan                = "${var.device_plan}"
   device_os_name             = "${var.device_os_name}"
   device_user_data_file_path = "${path.root}/${var.device_user_data_file_path}"
+  device_username            = "${var.device_username}"
   device_count               = "${var.device_count}"
 }
 
@@ -49,6 +54,10 @@ output "device_names" {
 
 output "device_ips" {
   value = "${local.device_ips}"
+}
+
+output "device_username" {
+  value = "${local.device_username}"
 }
 
 output "key_id" {

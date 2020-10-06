@@ -2,7 +2,7 @@ terraform {
   required_version = ">= 0.12.0"
 
   backend "consul" {
-    path = "packet-samples-device-windows/.terraform/terraform.tfstate"
+    path = "sample-device-windows/.terraform/terraform.tfstate"
   }
 }
 

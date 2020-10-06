@@ -3,26 +3,26 @@
 Task("Restore")
   .IsDependentOn("RestoreCore")
   .Does(() => {
+    var sampleImageReference = GetSampleImageReference();
+    var artifactImageReference = GetArtifactImageReference();
+
     {
       var settings = new DockerImagePullSettings {
       };
-      var imageReference = GetSampleImageReference();
-      DockerPull(settings, imageReference);
+
+      DockerPull(settings, artifactImageReference);
     }
 
-    if (packageRegistry == defaultDockerRegistry) {
-      var settings = new DockerComposeUpSettings {
-        DetachedMode = true
-      };
-      var services = new [] { "registry" };
-      DockerComposeUp(settings, services);
+    {
+      DockerTag(artifactImageReference, sampleImageReference);
     }
-    
+
     {
       var settings = new DockerComposeRunSettings {
       };
       var service = "sample";
       var command = "init";
+
       DockerComposeRun(settings, service, command);
     }
   });
@@ -34,6 +34,7 @@ Task("Build")
     };
     var service = "sample";
     var command = "plan";
+
     DockerComposeRun(settings, service, command);
   });
 
@@ -45,16 +46,10 @@ Task("Test")
 Task("Package")
   .IsDependentOn("Test")
   .Does(() => {
-    var imageReference = GetSampleImageReference();
+    var sampleImageReference = GetSampleImageReference();
+    var deployImageReference = GetDeployImageReference();
 
-    var sampleImage = $"{packageRegistry}samples-{sampleName}:{packageVersion}";
-    Environment.SetEnvironmentVariable("SAMPLE_IMAGE", sampleImage);
-    Information($"SAMPLE_IMAGE: '{sampleImage}'.");
-
-    var registryReference = GetSampleImageReference();
-
-    Information($"Tagging '{imageReference}' as '{registryReference}'.");
-    DockerTag(imageReference, registryReference);
+    DockerTag(sampleImageReference, deployImageReference);
   });
 
 Task("Publish")
@@ -62,8 +57,21 @@ Task("Publish")
   .Does(() => {
     var settings = new DockerImagePushSettings {
     };
-    var imageReference = GetSampleImageReference();
+    var imageReference = GetDeployImageReference();
+
     DockerPush(settings, imageReference);
+  });
+
+Task("Clean")
+  .IsDependentOn("CleanCore")
+  .Does(() => {
+    var settings = new DockerImageRemoveSettings {
+      Force = true
+    };
+    var artifactImageReference = GetArtifactImageReference();
+    var deployImageReference = GetDeployImageReference();
+
+    DockerRemove(settings, artifactImageReference, deployImageReference);
   });
 
 RunTarget(target);
