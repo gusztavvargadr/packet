@@ -5,11 +5,11 @@ module "device" {
 
   project_name = "${local.project_name}"
 
-  device_facility  = "${local.device_facility}"
-  device_plan      = "${local.device_plan}"
-  device_os_name   = "${local.device_os_name}"
-  device_user_data = "${file("${local.device_user_data_file_path}")}"
-  device_count     = "${local.device_count}"
+  device_facilities = "${local.device_facilities}"
+  device_plan       = "${local.device_plan}"
+  device_os_name    = "${local.device_os_name}"
+  device_user_data  = "${file("${local.device_user_data_file_path}")}"
+  device_count      = "${local.device_count}"
 }
 
 locals {

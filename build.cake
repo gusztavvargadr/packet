@@ -3,10 +3,6 @@
 Task("Restore")
   .IsDependentOn("RestoreCore")
   .Does(() => {
-    var settings = new DockerComposeBuildSettings {
-    };
-    var services = new [] { "terraform" };
-    DockerComposeBuild(settings, services);
   });
 
 Task("Build")
@@ -15,6 +11,7 @@ Task("Build")
     var settings = new DockerComposeBuildSettings {
     };
     var services = new [] { "sample" };
+
     DockerComposeBuild(settings, services);
   });
 
@@ -26,6 +23,7 @@ Task("Test")
       };
       var service = "sample";
       var command = "init -backend=false";
+
       DockerComposeRun(settings, service, command);
     }
 
@@ -34,6 +32,7 @@ Task("Test")
       };
       var service = "sample";
       var command = "validate";
+
       DockerComposeRun(settings, service, command);
     }
   });
@@ -41,6 +40,10 @@ Task("Test")
 Task("Package")
   .IsDependentOn("Test")
   .Does(() => {
+    var sampleImageReference = GetSampleImageReference();
+    var artifactImageReference = GetArtifactImageReference();
+
+    DockerTag(sampleImageReference, artifactImageReference);
   });
 
 Task("Publish")
@@ -48,8 +51,20 @@ Task("Publish")
   .Does(() => {
     var settings = new DockerImagePushSettings {
     };
-    var imageReference = GetSampleImageReference();
+    var imageReference = GetArtifactImageReference();
+
     DockerPush(settings, imageReference);
+  });
+
+Task("Clean")
+  .IsDependentOn("CleanCore")
+  .Does(() => {
+    var settings = new DockerImageRemoveSettings {
+      Force = true
+    };
+    var imageReference = GetArtifactImageReference();
+
+    DockerRemove(settings, imageReference);
   });
 
 RunTarget(target);

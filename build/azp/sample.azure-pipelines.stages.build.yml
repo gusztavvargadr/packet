@@ -19,37 +19,37 @@ stages:
 
     jobs:
       - ${{ each sample in parameters.samples }}:
-        - job: build_${{ join('_', sample.name) }}
-          displayName: Build ${{ join('-', sample.name) }}
+          - job: build_${{ join('_', sample.name) }}
+            displayName: Build ${{ join('-', sample.name) }}
 
-          pool:
-            vmImage: ubuntu-16.04
+            pool:
+              vmImage: ubuntu-16.04
 
-          workspace:
-            clean: all
+            workspace:
+              clean: all
 
-          steps:
-            - template: ./sample.azure-pipelines.steps.initialize.yml
+            steps:
+              - template: ./sample.azure-pipelines.steps.initialize.yml
 
-            - script: |
-                dotnet cake build.cake --target=publish --sample-name=${{ join('-', sample.name) }}
-              displayName: Publish Build
-              env:
-                PACKET_AUTH_TOKEN: $(packet-auth-token)
+              - script: |
+                  dotnet cake build.cake --target=publish --sample-name=${{ join('-', sample.name) }} --artifact-registry=$(artifact-registry)
+                displayName: Publish Build
+                env:
+                  PACKET_AUTH_TOKEN: $(packet-auth-token)
 
-            - script: |
-                dotnet cake build.cake --target=clean --sample-name=${{ join('-', sample.name) }}
-              displayName: Clean Build
-              condition: always()
-              env:
-                PACKET_AUTH_TOKEN: $(packet-auth-token)
+              - script: |
+                  dotnet cake build.cake --target=clean --sample-name=${{ join('-', sample.name) }} --artifact-registry=$(artifact-registry)
+                displayName: Clean Build
+                condition: always()
+                env:
+                  PACKET_AUTH_TOKEN: $(packet-auth-token)
 
-            - script: |
-                sudo chmod -R o+rX ./artifacts/registry/
-              displayName: Initialize Registry Artifact
-              condition: always()
+              - script: |
+                  sudo chmod -R o+rX ./artifacts/registry/
+                displayName: Initialize Registry Artifact
+                condition: always()
 
-            - publish: $(Build.SourcesDirectory)/artifacts/registry/
-              displayName: Publish Registry Artifact
-              condition: always()
-              artifact: build-${{ join('-', sample.name) }}-registry
+              - publish: $(Build.SourcesDirectory)/artifacts/registry/
+                displayName: Publish Registry Artifact
+                condition: always()
+                artifact: build-${{ join('-', sample.name) }}-registry

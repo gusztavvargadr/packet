@@ -24,53 +24,53 @@ stages:
 
     jobs:
       - ${{ each sample in parameters.samples }}:
-        - ${{ each packageVersion in parameters.packageVersions }}:
-          - deployment: deploy_${{ join('_', sample.name) }}_${{ packageVersion }}
-            displayName: Deploy ${{ join('-', sample.name) }} ${{ packageVersion }}
-            environment: ${{ parameters.name }}
+          - ${{ each packageVersion in parameters.packageVersions }}:
+              - deployment: deploy_${{ join('_', sample.name) }}_${{ packageVersion }}
+                displayName: Deploy ${{ join('-', sample.name) }} ${{ packageVersion }}
+                environment: ${{ parameters.name }}
 
-            pool:
-              vmImage: ubuntu-16.04
+                pool:
+                  vmImage: ubuntu-16.04
 
-            workspace:
-              clean: all
+                workspace:
+                  clean: all
 
-            strategy:
-              runOnce:
-                deploy:
-                  steps:
-                    - template: ./sample.azure-pipelines.steps.initialize.yml
+                strategy:
+                  runOnce:
+                    deploy:
+                      steps:
+                        - template: ./sample.azure-pipelines.steps.initialize.yml
 
-                    - task: DownloadPipelineArtifact@2
-                      displayName: Download Registry Artifact
-                      inputs:
-                        artifact: build-${{ join('-', sample.name) }}-registry
-                        path: $(Build.SourcesDirectory)/artifacts/registry/
+                        - task: DownloadPipelineArtifact@2
+                          displayName: Download Registry Artifact
+                          inputs:
+                            artifact: build-${{ join('-', sample.name) }}-registry
+                            path: $(Build.SourcesDirectory)/artifacts/registry/
 
-                    - ${{ if parameters.packageRegistry }}:
-                      - task: Docker@2
-                        displayName: Login Docker
-                        inputs:
-                          command: login
-                          containerRegistry: ${{ parameters.packageRegistry }}
+                        - ${{ if parameters.packageRegistry }}:
+                            - task: Docker@2
+                              displayName: Login Docker
+                              inputs:
+                                command: login
+                                containerRegistry: ${{ parameters.packageRegistry }}
 
-                    - script: |
-                        dotnet cake deploy.cake --target=publish --sample-name=${{ join('-', sample.name) }} --package-version=${{ packageVersion }} --package-registry=$(package-registry)
-                      displayName: Publish Deployment
-                      env:
-                        PACKET_AUTH_TOKEN: $(packet-auth-token)
+                        - script: |
+                            dotnet cake deploy.cake --target=publish --sample-name=${{ join('-', sample.name) }} --package-version=${{ packageVersion }} --artifact-registry=$(artifact-registry) --deploy-registry=$(deploy-registry)
+                          displayName: Publish Deployment
+                          env:
+                            PACKET_AUTH_TOKEN: $(packet-auth-token)
 
-                    - script: |
-                        dotnet cake deploy.cake --target=clean --sample-name=${{ join('-', sample.name) }} --package-version=${{ packageVersion }} --package-registry=$(package-registry)
-                      displayName: Clean Deployment
-                      condition: always()
-                      env:
-                        PACKET_AUTH_TOKEN: $(packet-auth-token)
+                        - script: |
+                            dotnet cake deploy.cake --target=clean --sample-name=${{ join('-', sample.name) }} --package-version=${{ packageVersion }} --artifact-registry=$(artifact-registry) --deploy-registry=$(deploy-registry)
+                          displayName: Clean Deployment
+                          condition: always()
+                          env:
+                            PACKET_AUTH_TOKEN: $(packet-auth-token)
 
-                    - ${{ if parameters.packageRegistry }}:
-                      - task: Docker@2
-                        displayName: Logout Docker
-                        condition: always()
-                        inputs:
-                          command: logout
-                          containerRegistry: ${{ parameters.packageRegistry }}
+                        - ${{ if parameters.packageRegistry }}:
+                            - task: Docker@2
+                              displayName: Logout Docker
+                              condition: always()
+                              inputs:
+                                command: logout
+                                containerRegistry: ${{ parameters.packageRegistry }}

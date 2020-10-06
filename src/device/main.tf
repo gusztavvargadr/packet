@@ -1,21 +1,21 @@
 variable "deployment_name" {
-  default = "gusztavvargadr-packet-device-default"
+  default = "device"
 }
 
 variable "project_name" {
-  default = "default"
+  type = string
 }
 
-variable "device_facility" {
-  default = "ewr1"
+variable "device_facilities" {
+  type = list(string)
 }
 
 variable "device_plan" {
-  default = "t1.small.x86"
+  type = string
 }
 
 variable "device_os_name" {
-  default = "Ubuntu 16.04 LTS"
+  type = string
 }
 
 variable "device_user_data" {
@@ -31,7 +31,7 @@ locals {
 
   project_name = "${var.project_name}"
 
-  device_facility      = "${var.device_facility}"
+  device_facilities    = "${var.device_facilities}"
   device_plan          = "${var.device_plan}"
   device_billing_cycle = "hourly"
   device_os_name       = "${var.device_os_name}"

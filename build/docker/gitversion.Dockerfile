@@ -1,5 +1,5 @@
-FROM gittools/gitversion:5.1.3-linux
+ARG GITVERSION_VERSION
+
+FROM gittools/gitversion:${GITVERSION_VERSION}
 
 WORKDIR /opt/gitversion/
-
-CMD [ "/h" ]

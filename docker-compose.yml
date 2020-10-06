@@ -1,51 +1,38 @@
-version: '3'
+version: "3"
 
 services:
   gitversion:
     build:
       context: ./build/docker/
       dockerfile: ./gitversion.Dockerfile
-
+      args:
+        GITVERSION_VERSION: ${GITVERSION_VERSION}
     volumes:
-      - ${REPO_DIR}:/opt/gitversion/
-
+      - ./:/opt/gitversion/
     command: /showvariable SemVer
 
   registry:
     build:
       context: ./build/docker/
       dockerfile: ./registry.Dockerfile
-
+      args:
+        REGISTRY_VERSION: ${REGISTRY_VERSION}
     volumes:
-      - ${REPO_DIR}artifacts/registry/data/:/var/lib/registry/
-
+      - ./artifacts/registry/data/:/var/lib/registry/
     ports:
-      - '5000:5000'
+      - "5000:5000"
 
   consul:
     build:
       context: ./build/docker/
       dockerfile: ./consul.Dockerfile
-
-    volumes:
-      - ${REPO_DIR}artifacts/consul/data/:/consul/data/
-
-    ports:
-      - '8500:8500'
-
-  terraform:
-    build:
-      context: ./build/docker/
-      dockerfile: ./terraform.Dockerfile
       args:
-        TERRAFORM_VERSION: ${TERRAFORM_VERSION}
-
+        CONSUL_VERSION: ${CONSUL_VERSION}
     volumes:
-      - ${REPO_DIR}:/opt/terraform/
-
-    environment:
-      CONSUL_HTTP_ADDR:
-      PACKET_AUTH_TOKEN:
+      - ./artifacts/consul/data/:/consul/data/
+    ports:
+      - "8500:8500"
+    command: agent
 
   sample:
     build:
@@ -54,12 +41,9 @@ services:
       args:
         TERRAFORM_VERSION: ${TERRAFORM_VERSION}
         SAMPLE_NAME: ${SAMPLE_NAME}
-
-    image: ${SAMPLE_IMAGE}
-
     volumes:
-      - ${REPO_DIR}samples/${SAMPLE_NAME}/.terraform/:/opt/terraform/samples/${SAMPLE_NAME}/.terraform/
-
+      - ./samples/${SAMPLE_NAME}/.terraform/:/opt/terraform/samples/${SAMPLE_NAME}/.terraform/
     environment:
       CONSUL_HTTP_ADDR:
       PACKET_AUTH_TOKEN:
+    command: -help

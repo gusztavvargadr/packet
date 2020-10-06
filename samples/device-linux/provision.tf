@@ -3,17 +3,8 @@ resource "null_resource" "provision" {
     device_id = local.device_ids[count.index]
   }
 
-  connection {
-    type        = "ssh"
-    host        = local.device_ips[count.index]
-    user        = "root"
-    private_key = local.key_private
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "echo 'Hello World!'",
-    ]
+  provisioner "local-exec" {
+    command = "ssh -oStrictHostKeyChecking=no -i ${local.key_private_file_path} ${local.device_username}@${local.device_ips[count.index]} echo 'Hello World!'"
   }
 
   count = local.device_count
